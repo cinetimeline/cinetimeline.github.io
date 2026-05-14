@@ -27,1830 +27,455 @@
             --film: #1c1c30;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent
-        }
-
-        html, body {
-            height: 100%;
-            overflow: hidden
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent }
+        html, body { height: 100%; overflow: hidden }
         body {
             font-family: 'Inter',sans-serif;
             background: var(--bg);
             color: var(--text);
             font-size: 15px
         }
-
-            /* ── FILM GRAIN OVERLAY ── */
-            body::before {
-                content: '';
-                position: fixed;
-                inset: 0;
-                z-index: 9999;
-                pointer-events: none;
-                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-                opacity: .5;
-                animation: grain 0.8s steps(1) infinite;
-            }
-
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            opacity: .5;
+            animation: grain 0.8s steps(1) infinite;
+        }
         @keyframes grain {
-            0%,100% {
-                transform: translate(0,0)
-            }
-
-            25% {
-                transform: translate(-2%,-1%)
-            }
-
-            50% {
-                transform: translate(1%,2%)
-            }
-
-            75% {
-                transform: translate(-1%,1%)
-            }
+            0%,100% { transform: translate(0,0) }
+            25% { transform: translate(-2%,-1%) }
+            50% { transform: translate(1%,2%) }
+            75% { transform: translate(-1%,1%) }
         }
 
-        /* ── SCREENS ── */
-        .screen {
-            display: none;
-            flex-direction: column;
-            width: 100%;
-            height: 100%;
-            overflow-y: auto;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch
-        }
+        .screen { display: none; flex-direction: column; width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch }
+        .screen.active { display: flex }
 
-            .screen.active {
-                display: flex
-            }
-
-        /* ══════════════ LOBBY ══════════════ */
+        /* ══ LOBBY ══ */
         #lobbyScreen {
             align-items: center;
             justify-content: center;
             padding: 20px;
             background: radial-gradient(ellipse 60% 40% at 50% 0%,rgba(232,200,66,.08) 0%,transparent 70%), radial-gradient(ellipse 40% 30% at 80% 80%,rgba(74,158,255,.06) 0%,transparent 60%), var(--bg);
         }
-
-            /* Film strip top/bottom decoration */
-            #lobbyScreen::before, #lobbyScreen::after {
-                content: '';
-                position: fixed;
-                left: 0;
-                right: 0;
-                height: 28px;
-                background: repeating-linear-gradient(90deg,var(--bg3) 0px,var(--bg3) 20px,var(--bg) 20px,var(--bg) 30px);
-                border-top: 2px solid var(--border2);
-                border-bottom: 2px solid var(--border2);
-                z-index: 0;
-                pointer-events: none;
-            }
-
-            #lobbyScreen::before {
-                top: 0
-            }
-
-            #lobbyScreen::after {
-                bottom: 0
-            }
-
-        .logo {
-            text-align: center;
-            margin-bottom: 32px;
-            position: relative;
-            z-index: 1
+        #lobbyScreen::before, #lobbyScreen::after {
+            content: '';
+            position: fixed;
+            left: 0; right: 0;
+            height: 28px;
+            background: repeating-linear-gradient(90deg,var(--bg3) 0px,var(--bg3) 20px,var(--bg) 20px,var(--bg) 30px);
+            border-top: 2px solid var(--border2);
+            border-bottom: 2px solid var(--border2);
+            z-index: 0;
+            pointer-events: none;
         }
+        #lobbyScreen::before { top: 0 }
+        #lobbyScreen::after { bottom: 0 }
 
+        .logo { text-align: center; margin-bottom: 32px; position: relative; z-index: 1 }
         .logo-mark {
-            display: inline-block;
-            width: 72px;
-            height: 72px;
-            border-radius: 18px;
+            display: inline-flex; width: 72px; height: 72px; border-radius: 18px;
             background: linear-gradient(135deg,var(--bg3),var(--bg4));
             border: 1.5px solid var(--gold);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
+            align-items: center; justify-content: center; font-size: 2rem;
             margin: 0 auto 14px;
             box-shadow: 0 0 40px rgba(232,200,66,.2),inset 0 1px 0 rgba(255,255,255,.1);
             animation: logoGlow 3s ease-in-out infinite;
         }
-
         @keyframes logoGlow {
-            0%,100% {
-                box-shadow: 0 0 30px rgba(232,200,66,.15),inset 0 1px 0 rgba(255,255,255,.1)
-            }
-
-            50% {
-                box-shadow: 0 0 60px rgba(232,200,66,.35),inset 0 1px 0 rgba(255,255,255,.1)
-            }
+            0%,100% { box-shadow: 0 0 30px rgba(232,200,66,.15),inset 0 1px 0 rgba(255,255,255,.1) }
+            50% { box-shadow: 0 0 60px rgba(232,200,66,.35),inset 0 1px 0 rgba(255,255,255,.1) }
         }
-
         .logo-name {
-            font-family: 'Bebas Neue',sans-serif;
-            font-size: 3.2rem;
-            letter-spacing: 6px;
+            font-family: 'Bebas Neue',sans-serif; font-size: 3.2rem; letter-spacing: 6px;
             background: linear-gradient(135deg,var(--gold) 0%,var(--gold2) 60%,#fff8c0 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: block;
-            line-height: 1;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            display: block; line-height: 1;
         }
-
-        .logo-tag {
-            font-size: .7rem;
-            color: var(--muted2);
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            margin-top: 6px;
-            font-weight: 500
-        }
+        .logo-tag { font-size: .7rem; color: var(--muted2); letter-spacing: 4px; text-transform: uppercase; margin-top: 6px; font-weight: 500 }
 
         .card {
             background: linear-gradient(145deg,rgba(20,20,32,.95),rgba(14,14,26,.95));
-            border: 1px solid var(--border2);
-            border-radius: 24px;
-            padding: 28px;
-            width: 100%;
-            max-width: 400px;
-            backdrop-filter: blur(20px);
-            position: relative;
-            z-index: 1;
+            border: 1px solid var(--border2); border-radius: 24px; padding: 28px;
+            width: 100%; max-width: 400px;
+            backdrop-filter: blur(20px); position: relative; z-index: 1;
             box-shadow: 0 40px 80px rgba(0,0,0,.6),0 0 0 1px rgba(232,200,66,.05);
         }
-
-        .tabs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            margin-bottom: 22px
-        }
-
+        .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 22px }
         .tab {
-            padding: 11px;
-            border: 1.5px solid var(--border2);
-            background: transparent;
-            color: var(--muted2);
-            border-radius: 10px;
-            font-family: 'Inter',sans-serif;
-            font-size: .88rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: .2s;
-            letter-spacing: .5px;
+            padding: 11px; border: 1.5px solid var(--border2); background: transparent;
+            color: var(--muted2); border-radius: 10px; font-family: 'Inter',sans-serif;
+            font-size: .88rem; font-weight: 600; cursor: pointer; transition: .2s; letter-spacing: .5px;
         }
-
-            .tab.on {
-                background: var(--gold);
-                border-color: var(--gold);
-                color: #000
-            }
-
-        .field {
-            margin-bottom: 16px
+        .tab.on { background: var(--gold); border-color: var(--gold); color: #000 }
+        .field { margin-bottom: 16px }
+        .field label { display: block; font-size: .65rem; color: var(--muted2); margin-bottom: 6px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase }
+        .field input, .field select {
+            width: 100%; padding: 12px 14px;
+            background: rgba(255,255,255,.04); border: 1.5px solid var(--border2);
+            border-radius: 10px; color: var(--text); font-family: 'Inter',sans-serif;
+            font-size: .92rem; outline: none; transition: .2s;
         }
-
-            .field label {
-                display: block;
-                font-size: .65rem;
-                color: var(--muted2);
-                margin-bottom: 6px;
-                font-weight: 600;
-                letter-spacing: 2px;
-                text-transform: uppercase
-            }
-
-            .field input, .field select {
-                width: 100%;
-                padding: 12px 14px;
-                background: rgba(255,255,255,.04);
-                border: 1.5px solid var(--border2);
-                border-radius: 10px;
-                color: var(--text);
-                font-family: 'Inter',sans-serif;
-                font-size: .92rem;
-                outline: none;
-                transition: .2s;
-            }
-
-                .field input:focus, .field select:focus {
-                    border-color: var(--gold);
-                    background: rgba(232,200,66,.04)
-                }
-
-                .field select option {
-                    background: var(--bg3)
-                }
-
-                .field input[style*="letter-spacing"] {
-                    text-align: center;
-                    font-family: 'JetBrains Mono',monospace;
-                    font-size: 1.4rem
-                }
-
-        .win-row {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 16px
-        }
-
+        .field input:focus, .field select:focus { border-color: var(--gold); background: rgba(232,200,66,.04) }
+        .field select option { background: var(--bg3) }
+        .field input[style*="letter-spacing"] { text-align: center; font-family: 'JetBrains Mono',monospace; font-size: 1.4rem }
+        .win-row { display: flex; gap: 6px; margin-bottom: 16px }
         .win-opt {
-            flex: 1;
-            padding: 10px 6px;
-            border: 1.5px solid var(--border2);
-            background: transparent;
-            color: var(--muted2);
-            border-radius: 10px;
-            font-family: 'Inter',sans-serif;
-            font-size: .85rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: .2s;
-            text-align: center;
+            flex: 1; padding: 10px 6px; border: 1.5px solid var(--border2); background: transparent;
+            color: var(--muted2); border-radius: 10px; font-family: 'Inter',sans-serif;
+            font-size: .85rem; font-weight: 700; cursor: pointer; transition: .2s; text-align: center;
         }
-
-            .win-opt.on {
-                background: rgba(232,200,66,.15);
-                border-color: var(--gold);
-                color: var(--gold)
-            }
-
+        .win-opt.on { background: rgba(232,200,66,.15); border-color: var(--gold); color: var(--gold) }
         .btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
+            width: 100%; padding: 14px; border: none; border-radius: 12px;
             background: linear-gradient(135deg,var(--gold),#d4a820);
-            color: #000;
-            font-family: 'Inter',sans-serif;
-            font-size: .95rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: .2s;
-            margin-top: 6px;
-            letter-spacing: .5px;
+            color: #000; font-family: 'Inter',sans-serif; font-size: .95rem; font-weight: 700;
+            cursor: pointer; transition: .2s; margin-top: 6px; letter-spacing: .5px;
         }
-
-            .btn:hover:not(:disabled) {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 30px rgba(232,200,66,.4)
-            }
-
-            .btn:disabled {
-                background: var(--bg4);
-                color: var(--muted);
-                cursor: not-allowed
-            }
-
-            .btn.ghost {
-                background: transparent;
-                border: 1.5px solid var(--border2);
-                color: var(--muted2);
-                font-weight: 600;
-                margin-top: 8px
-            }
-
-                .btn.ghost:hover:not(:disabled) {
-                    border-color: var(--gold);
-                    color: var(--gold);
-                    background: transparent;
-                    box-shadow: none;
-                    transform: none
-                }
-
-            .btn.small {
-                padding: 9px 16px;
-                font-size: .82rem;
-                width: auto;
-                margin-top: 0
-            }
-
-            .btn.danger {
-                background: linear-gradient(135deg,var(--red),#c02020);
-                color: #fff
-            }
-
+        .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(232,200,66,.4) }
+        .btn:disabled { background: var(--bg4); color: var(--muted); cursor: not-allowed }
+        .btn.ghost {
+            background: transparent; border: 1.5px solid var(--border2);
+            color: var(--muted2); font-weight: 600; margin-top: 8px
+        }
+        .btn.ghost:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); background: transparent; box-shadow: none; transform: none }
+        .btn.small { padding: 9px 16px; font-size: .82rem; width: auto; margin-top: 0 }
+        .btn.danger { background: linear-gradient(135deg,var(--red),#c02020); color: #fff }
         .btn-how {
-            width: 100%;
-            padding: 11px;
-            border: 1.5px solid rgba(232,200,66,.25);
-            background: rgba(232,200,66,.05);
-            color: var(--gold);
-            font-family: 'Inter',sans-serif;
-            font-size: .85rem;
-            font-weight: 600;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: .2s;
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            letter-spacing: .5px;
+            width: 100%; padding: 11px; border: 1.5px solid rgba(232,200,66,.25);
+            background: rgba(232,200,66,.05); color: var(--gold); font-family: 'Inter',sans-serif;
+            font-size: .85rem; font-weight: 600; border-radius: 12px; cursor: pointer; transition: .2s;
+            margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: .5px;
         }
+        .btn-how:hover { background: rgba(232,200,66,.12); border-color: rgba(232,200,66,.5); transform: translateY(-1px) }
+        .err { color: var(--red); font-size: .78rem; text-align: center; margin-top: 8px; min-height: 16px }
+        .lobby-footer { margin-top: 20px; text-align: center; font-size: .68rem; color: var(--muted); letter-spacing: 2px; position: relative; z-index: 1 }
+        .lobby-footer strong { color: var(--muted2) }
 
-            .btn-how:hover {
-                background: rgba(232,200,66,.12);
-                border-color: rgba(232,200,66,.5);
-                transform: translateY(-1px)
-            }
-
-        .err {
-            color: var(--red);
-            font-size: .78rem;
-            text-align: center;
-            margin-top: 8px;
-            min-height: 16px
-        }
-
-        .lobby-footer {
-            margin-top: 20px;
-            text-align: center;
-            font-size: .68rem;
-            color: var(--muted);
-            letter-spacing: 2px;
-            position: relative;
-            z-index: 1
-        }
-
-            .lobby-footer strong {
-                color: var(--muted2)
-            }
-
-        /* ══════════════ WAIT SCREEN ══════════════ */
-        #waitScreen {
-            align-items: center;
-            justify-content: center;
-            padding: 20px
-        }
-
+        /* ══ WAIT ══ */
+        #waitScreen { align-items: center; justify-content: center; padding: 20px }
         .wait-box {
             background: linear-gradient(145deg,var(--bg2),var(--bg));
-            border: 1px solid var(--border2);
-            border-radius: 24px;
-            padding: 26px;
-            width: 100%;
-            max-width: 400px;
+            border: 1px solid var(--border2); border-radius: 24px; padding: 26px;
+            width: 100%; max-width: 400px;
         }
-
         .code-display {
-            text-align: center;
-            background: rgba(232,200,66,.06);
-            border-radius: 14px;
-            padding: 18px;
-            margin-bottom: 22px;
+            text-align: center; background: rgba(232,200,66,.06);
+            border-radius: 14px; padding: 18px; margin-bottom: 22px;
             border: 1px solid rgba(232,200,66,.2);
         }
+        .code-label { font-size: .65rem; color: var(--muted2); margin-bottom: 6px; letter-spacing: 2px; text-transform: uppercase; font-weight: 600 }
+        .code-big { font-family: 'JetBrains Mono',monospace; font-size: 2.8rem; font-weight: 500; color: var(--gold); letter-spacing: 12px }
+        .code-copy { font-size: .7rem; color: var(--muted); margin-top: 6px; cursor: pointer; user-select: none; transition: .15s }
+        .code-copy:hover { color: var(--gold) }
+        .plist-title { font-size: .65rem; color: var(--muted2); margin-bottom: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase }
+        .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px }
+        .chip { background: var(--bg3); border: 1px solid var(--border2); border-radius: 30px; padding: 6px 14px; font-size: .82rem }
+        .chip.host { border-color: var(--gold); color: var(--gold) }
+        .info-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px }
+        .info-badge { background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 5px 12px; font-size: .72rem; color: var(--muted2) }
+        .info-badge span { color: var(--gold); font-weight: 600 }
 
-        .code-label {
-            font-size: .65rem;
-            color: var(--muted2);
-            margin-bottom: 6px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-weight: 600
-        }
-
-        .code-big {
-            font-family: 'JetBrains Mono',monospace;
-            font-size: 2.8rem;
-            font-weight: 500;
-            color: var(--gold);
-            letter-spacing: 12px
-        }
-
-        .code-copy {
-            font-size: .7rem;
-            color: var(--muted);
-            margin-top: 6px;
-            cursor: pointer;
-            user-select: none;
-            transition: .15s
-        }
-
-            .code-copy:hover {
-                color: var(--gold)
-            }
-
-        .plist-title {
-            font-size: .65rem;
-            color: var(--muted2);
-            margin-bottom: 10px;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase
-        }
-
-        .chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 20px
-        }
-
-        .chip {
-            background: var(--bg3);
-            border: 1px solid var(--border2);
-            border-radius: 30px;
-            padding: 6px 14px;
-            font-size: .82rem
-        }
-
-            .chip.host {
-                border-color: var(--gold);
-                color: var(--gold)
-            }
-
-        .info-badges {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 16px
-        }
-
-        .info-badge {
-            background: var(--bg3);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 5px 12px;
-            font-size: .72rem;
-            color: var(--muted2)
-        }
-
-            .info-badge span {
-                color: var(--gold);
-                font-weight: 600
-            }
-
-        /* ══════════════ GAME SCREEN ══════════════ */
-        #gameScreen {
-            padding: 0;
-            justify-content: flex-start
-        }
-
+        /* ══ GAME ══ */
+        #gameScreen { padding: 0; justify-content: flex-start }
         .game-wrap {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            max-width: 520px;
-            margin: 0 auto;
-            padding: 12px 12px 80px;
-            min-height: 100%;
+            display: flex; flex-direction: column; width: 100%; max-width: 520px;
+            margin: 0 auto; padding: 12px 12px 80px; min-height: 100%;
         }
-
-        .gh {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            padding: 0 2px
-        }
-
-        .room-pill {
-            font-family: 'JetBrains Mono',monospace;
-            font-size: .7rem;
-            color: var(--muted2);
-            background: var(--bg2);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 5px 12px;
-        }
-
-        .win-target-pill {
-            font-family: 'JetBrains Mono',monospace;
-            font-size: .7rem;
-            color: var(--gold);
-            background: rgba(232,200,66,.08);
-            border: 1px solid rgba(232,200,66,.25);
-            border-radius: 20px;
-            padding: 5px 12px;
-        }
-
-        /* ── SCORES ── */
-        .scores {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 14px
-        }
-
+        .gh { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding: 0 2px }
+        .room-pill { font-family: 'JetBrains Mono',monospace; font-size: .7rem; color: var(--muted2); background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 5px 12px }
+        .win-target-pill { font-family: 'JetBrains Mono',monospace; font-size: .7rem; color: var(--gold); background: rgba(232,200,66,.08); border: 1px solid rgba(232,200,66,.25); border-radius: 20px; padding: 5px 12px }
+        .scores { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px }
         .sc {
             flex: 0 0 auto;
             background: linear-gradient(145deg,var(--bg3),var(--bg2));
-            border: 1px solid var(--border2);
-            border-radius: 12px;
-            padding: 8px 14px;
-            transition: .3s;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 14px;
+            border: 1px solid var(--border2); border-radius: 12px; padding: 8px 14px;
+            transition: .3s; display: flex; flex-direction: row; align-items: center; gap: 14px;
         }
-
-            .sc.me {
-                border-color: rgba(232,200,66,.3);
-                background: linear-gradient(145deg,rgba(232,200,66,.06),var(--bg2))
-            }
-
-            .sc.active {
-                border-color: var(--gold) !important;
-                box-shadow: 0 0 16px rgba(232,200,66,.2)
-            }
-
-        .sc-n {
-            font-size: .72rem;
-            color: var(--muted2);
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 80px
-        }
-
-        .sc-p {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--text);
-            display: flex;
-            align-items: baseline;
-            gap: 4px
-        }
-
-            .sc-p span {
-                font-size: .6rem;
-                color: var(--muted);
-                font-weight: 400
-            }
-
+        .sc.me { border-color: rgba(232,200,66,.3); background: linear-gradient(145deg,rgba(232,200,66,.06),var(--bg2)) }
+        .sc.active { border-color: var(--gold) !important; box-shadow: 0 0 16px rgba(232,200,66,.2) }
+        .sc-n { font-size: .72rem; color: var(--muted2); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px }
+        .sc-p { font-size: 1.1rem; font-weight: 700; color: var(--text); display: flex; align-items: baseline; gap: 4px }
+        .sc-p span { font-size: .6rem; color: var(--muted); font-weight: 400 }
         .coin-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
+            display: inline-flex; align-items: center; gap: 4px;
             background: linear-gradient(135deg,#ffd700,#e8a800);
-            padding: 2px 8px 2px 6px;
-            border-radius: 16px;
+            padding: 2px 8px 2px 6px; border-radius: 16px;
             border: 1px solid rgba(255,215,0,.4);
             box-shadow: 0 2px 6px rgba(0,0,0,.4),inset 0 1px 2px rgba(255,255,255,.3);
-            color: #3d2800;
-            font-weight: 700;
-            font-size: .75rem;
-            font-family: 'JetBrains Mono',monospace;
+            color: #3d2800; font-weight: 700; font-size: .75rem; font-family: 'JetBrains Mono',monospace;
         }
-
-        /* ── WIN PROGRESS ── */
-        .win-progress {
-            background: var(--bg2);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 8px 12px;
-            margin-bottom: 12px
-        }
-
-        .win-progress-label {
-            font-size: .65rem;
-            color: var(--muted2);
-            margin-bottom: 6px;
-            font-weight: 500
-        }
-
-        .win-progress-bar {
-            height: 3px;
-            background: var(--bg4);
-            border-radius: 4px;
-            overflow: hidden
-        }
-
-        .win-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg,var(--gold),var(--gold2));
-            border-radius: 4px;
-            transition: width .5s ease
-        }
-
-        /* ── BANNER ── */
+        .win-progress { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; margin-bottom: 12px }
+        .win-progress-label { font-size: .65rem; color: var(--muted2); margin-bottom: 6px; font-weight: 500 }
+        .win-progress-bar { height: 3px; background: var(--bg4); border-radius: 4px; overflow: hidden }
+        .win-progress-fill { height: 100%; background: linear-gradient(90deg,var(--gold),var(--gold2)); border-radius: 4px; transition: width .5s ease }
         .banner {
-            background: rgba(232,200,66,.08);
-            border: 1px solid rgba(232,200,66,.2);
-            border-radius: 12px;
-            padding: 9px 14px;
-            text-align: center;
-            font-size: .85rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: var(--gold);
-            letter-spacing: .5px;
+            background: rgba(232,200,66,.08); border: 1px solid rgba(232,200,66,.2);
+            border-radius: 12px; padding: 9px 14px; text-align: center;
+            font-size: .85rem; font-weight: 600; margin-bottom: 12px; color: var(--gold); letter-spacing: .5px;
         }
+        .banner.other { background: rgba(255,255,255,.03); border-color: var(--border); color: var(--muted2) }
 
-            .banner.other {
-                background: rgba(255,255,255,.03);
-                border-color: var(--border);
-                color: var(--muted2)
-            }
+        /* ══ MOVIE CARD AREA ══ */
+        .movie-card-wrap { position: relative; width: 100%; margin-bottom: 12px }
 
-        /* ══════════════ MOVIE CARD ══════════════ */
-        .movie-card-wrap {
-            position: relative;
-            width: 100%;
-            margin-bottom: 12px
-        }
-
-        /* The card that shows BEFORE reveal — cinema style */
         .cinema-card {
-            width: 100%;
-            height: 120px;
-            border-radius: 18px;
-            overflow: hidden;
+            width: 100%; height: 220px; border-radius: 18px; overflow: hidden;
+            background: #000; border: 1.5px solid rgba(255,255,255,.1);
+            display: flex; flex-direction: column; position: relative;
+            cursor: default; transition: height 0.4s cubic-bezier(.16,1,.3,1);
+        }
+        .cinema-video-area { flex: 1; position: relative; overflow: hidden; background: #000 }
+        .cinema-video-area iframe {
+            position: absolute; top: -60px; left: -10px;
+            width: calc(100% + 20px); height: calc(100% + 120px);
+            border: none; pointer-events: none;
+        }
+
+        /* Idle placeholder */
+        .cinema-idle {
+            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
             background: linear-gradient(135deg,#0a0a18,#14142a);
-            border: 1.5px solid rgba(255,255,255,.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            cursor: default;
+            z-index: 2; flex-direction: column; gap: 10px;
+        }
+        .cinema-idle-icon { font-size: 2.2rem; filter: drop-shadow(0 0 20px rgba(232,200,66,.4)) }
+        .cinema-idle-text { font-size: .82rem; color: rgba(255,255,255,.4); text-align: center }
+        .cinema-idle-text strong { color: rgba(255,255,255,.7) }
+
+        /* ── PLAY BUTTON OVERLAY (centered on video) ── */
+        .play-overlay-btn {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            background: none;
+            border: none;
+            cursor: pointer;
+            pointer-events: all;
+        }
+        .play-overlay-circle {
+            width: 64px; height: 64px; border-radius: 50%;
+            background: rgba(232,200,66,.15);
+            border: 2px solid var(--gold);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; color: var(--gold);
+            transition: .2s;
+            box-shadow: 0 0 30px rgba(232,200,66,.3);
+        }
+        .play-overlay-btn:hover .play-overlay-circle {
+            background: var(--gold); color: #000; transform: scale(1.1);
+            box-shadow: 0 0 50px rgba(232,200,66,.6);
         }
 
-        .cinema-front {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 0 20px;
+        /* ── CUSTOM CONTROLS BAR ── */
+        .cinema-controls {
+            background: rgba(10,10,20,.95); border-top: 1px solid rgba(255,255,255,.08);
+            padding: 10px 14px 10px;
+            display: flex; flex-direction: column; gap: 8px; flex-shrink: 0;
         }
 
-        .cinema-icon {
-            font-size: 2.2rem;
-            filter: drop-shadow(0 0 20px rgba(232,200,66,.4))
+        /* Progress bar row */
+        .ctrl-progress-row { display: flex; align-items: center; gap: 8px }
+        .ctrl-time { font-family: 'JetBrains Mono',monospace; font-size: .62rem; color: var(--muted2); white-space: nowrap; min-width: 28px; text-align: right }
+        .ctrl-seek {
+            flex: 1; -webkit-appearance: none; appearance: none;
+            height: 4px; border-radius: 4px; outline: none; cursor: pointer;
+            background: linear-gradient(to right, var(--gold) 0%, var(--gold) var(--seek-pct,0%), rgba(255,255,255,.12) var(--seek-pct,0%), rgba(255,255,255,.12) 100%);
         }
-
-        .cinema-text {
-            font-size: .85rem;
-            color: rgba(255,255,255,.4);
-            line-height: 1.5
+        .ctrl-seek::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%;
+            background: var(--gold); cursor: pointer; border: none;
+            box-shadow: 0 0 6px rgba(232,200,66,.5);
         }
+        .ctrl-seek::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--gold); cursor: pointer; border: none }
 
-            .cinema-text strong {
-                color: rgba(255,255,255,.7)
-            }
+        /* Buttons + volume row — NO stop button, NO countdown pill */
+        .ctrl-btns-row { display: flex; align-items: center; gap: 10px }
+        .ctrl-btn {
+            width: 34px; height: 34px; border-radius: 50%;
+            border: 1.5px solid rgba(255,255,255,.12); background: rgba(255,255,255,.05);
+            color: rgba(255,255,255,.75); font-size: .9rem;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: .15s; flex-shrink: 0;
+        }
+        .ctrl-btn:hover { background: var(--gold); color: #000; border-color: var(--gold) }
+        .ctrl-btn.primary {
+            width: 40px; height: 40px; font-size: 1rem;
+            background: rgba(232,200,66,.12); border-color: rgba(232,200,66,.5); color: var(--gold);
+        }
+        .ctrl-btn.primary:hover { background: var(--gold); color: #000 }
+        .ctrl-volume-wrap { display: flex; align-items: center; gap: 6px; margin-left: auto }
+        .ctrl-vol-icon { font-size: .85rem; color: var(--muted2); cursor: pointer; transition: .15s }
+        .ctrl-vol-icon:hover { color: var(--gold) }
+        .ctrl-vol {
+            width: 72px; -webkit-appearance: none; appearance: none;
+            height: 3px; background: rgba(255,255,255,.15); border-radius: 3px; outline: none; cursor: pointer;
+        }
+        .ctrl-vol::-webkit-slider-thumb { -webkit-appearance: none; width: 11px; height: 11px; border-radius: 50%; background: var(--muted2); cursor: pointer; border: none }
+        .ctrl-vol::-moz-range-thumb { width: 11px; height: 11px; border-radius: 50%; background: var(--muted2); border: none; cursor: pointer }
+        .ctrl-vol:hover::-webkit-slider-thumb { background: var(--gold) }
 
         /* Revealed card */
         .revealed-card {
-            width: 100%;
-            border-radius: 18px;
-            overflow: hidden;
+            width: 100%; border-radius: 18px; overflow: hidden;
             background: linear-gradient(135deg,#120a20,#1a0a30);
             border: 1.5px solid rgba(168,85,247,.3);
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
+            padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 14px;
         }
-
-        .rv-info .rv-title {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 3px
-        }
-
-        .rv-info .rv-dir {
-            font-size: .72rem;
-            color: rgba(255,255,255,.45);
-            margin-bottom: 0
-        }
-
+        .rv-info .rv-title { font-size: 1rem; font-weight: 700; margin-bottom: 3px }
+        .rv-info .rv-dir { font-size: .72rem; color: rgba(255,255,255,.45); margin-bottom: 0 }
         .rv-year {
-            font-family: 'Bebas Neue',sans-serif;
-            font-size: 2.8rem;
-            letter-spacing: 2px;
+            font-family: 'Bebas Neue',sans-serif; font-size: 2.8rem; letter-spacing: 2px;
             background: linear-gradient(90deg,var(--red),#ff8040);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            flex-shrink: 0;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; flex-shrink: 0;
         }
 
-        /* ══════════════ YOUTUBE POPUP ══════════════ */
-        /* The cinematic overlay that appears when you click play */
-        .yt-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 500;
-            background: rgba(0,0,0,0);
-            pointer-events: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background .4s ease;
-        }
-
-            .yt-overlay.open {
-                background: rgba(0,0,0,.92);
-                pointer-events: all;
-            }
-
-        .yt-theater {
-            width: 100%;
-            max-width: 560px;
-            transform: scale(0.8) translateY(40px);
-            opacity: 0;
-            transition: transform .45s cubic-bezier(.16,1,.3,1), opacity .35s ease;
-            padding: 0 12px;
-            position: relative;
-        }
-
-        .yt-overlay.open .yt-theater {
-            transform: scale(1) translateY(0);
-            opacity: 1
-        }
-
-        /* Film frame decorations */
-        .yt-frame-top, .yt-frame-bottom {
-            height: 20px;
-            background: repeating-linear-gradient(90deg,#000 0px,#000 16px,#1a1a1a 16px,#1a1a1a 20px);
-            border-radius: 0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 0 8px;
-        }
-
-        .yt-frame-hole {
-            width: 12px;
-            height: 10px;
-            background: #111;
-            border-radius: 3px;
-            border: 1px solid #333;
-            flex-shrink: 0
-        }
-
-        .yt-frame-top {
-            border-radius: 14px 14px 0 0
-        }
-
-        .yt-frame-bottom {
-            border-radius: 0 0 14px 14px
-        }
-
-        .yt-screen {
-            background: #000;
-            position: relative;
-            aspect-ratio: 16/9;
-            overflow: hidden;
-        }
-
-            .yt-screen iframe {
-                position: absolute;
-                /* Expand to hide YouTube UI — clips the title bar and controls */
-                top: -60px;
-                left: -10px;
-                width: calc(100% + 20px);
-                height: calc(100% + 120px);
-                border: none;
-            }
-
-        .yt-curtain-left, .yt-curtain-right {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 10px;
-            background: #000;
-            z-index: 2;
-        }
-
-        .yt-curtain-left {
-            left: 0
-        }
-
-        .yt-curtain-right {
-            right: 0
-        }
-
-        .yt-title-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 4px 8px;
-        }
-
-        .yt-now-playing {
-            font-size: .72rem;
-            color: rgba(255,255,255,.4);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-weight: 500;
-        }
-
-        .yt-close-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: rgba(255,255,255,.1);
-            border: 1px solid rgba(255,255,255,.15);
-            color: rgba(255,255,255,.6);
-            cursor: pointer;
-            font-size: .9rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: .2s;
-        }
-
-            .yt-close-btn:hover {
-                background: rgba(232,200,66,.2);
-                color: var(--gold);
-                border-color: var(--gold)
-            }
-
-        .yt-countdown {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 4px;
-        }
-
-        .yt-countdown-bar {
-            flex: 1;
-            height: 3px;
-            background: rgba(255,255,255,.1);
-            border-radius: 3px;
-            overflow: hidden
-        }
-
-        .yt-countdown-fill {
-            height: 100%;
-            background: var(--gold);
-            border-radius: 3px;
-            width: 100%;
-            transition: none
-        }
-
-            .yt-countdown-fill.running30 {
-                transition: width 30s linear;
-            }
-
-       
-
-        .yt-countdown-lbl {
-            font-family: 'JetBrains Mono',monospace;
-            font-size: .68rem;
-            color: var(--muted2);
-            white-space: nowrap
-        }
-
-        .yt-hint-bar {
-            padding: 6px 4px 0;
-            font-size: .75rem;
-            color: rgba(255,255,255,.35);
-            text-align: center;
-            font-style: italic;
-        }
-
-        /* ── PLAY BUTTON (on the cinema card) ── */
-        .play-cinema-btn {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 3;
-            background: transparent;
-            border: none;
-        }
-
-        .play-circle {
-            width: 54px;
-            height: 54px;
-            border-radius: 50%;
-            background: rgba(232,200,66,.15);
-            border: 2px solid var(--gold);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            color: var(--gold);
-            transition: .2s;
-            box-shadow: 0 0 30px rgba(232,200,66,.25);
-        }
-
-        .play-cinema-btn:hover .play-circle {
-            background: var(--gold);
-            color: #000;
-            transform: scale(1.1);
-            box-shadow: 0 0 50px rgba(232,200,66,.5);
-        }
-
-        /* ── LISTENER BAR ── */
+        /* Listener bar */
         .listener-bar {
-            background: var(--bg2);
-            border: 1px solid var(--border2);
-            border-radius: 12px;
-            padding: 12px 14px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .listener-icon {
-            font-size: 1.4rem;
-            flex-shrink: 0
-        }
-
-        .listener-info .listener-song {
-            font-size: .88rem;
-            font-weight: 600;
-            color: var(--muted2)
-        }
-
-        .listener-info .listener-hint {
-            font-size: .7rem;
-            color: var(--muted);
-            margin-top: 2px
-        }
-
-        .projector-dots {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            margin-left: auto
-        }
-
-            .projector-dots span {
-                display: block;
-                width: 6px;
-                height: 6px;
-                border-radius: 50%;
-                background: var(--gold);
-                animation: blink 1.2s ease-in-out infinite
-            }
-
-                .projector-dots span:nth-child(2) {
-                    animation-delay: .2s
-                }
-
-                .projector-dots span:nth-child(3) {
-                    animation-delay: .4s
-                }
-
-        @keyframes blink {
-            0%,100% {
-                opacity: .2;
-                transform: scale(.8)
-            }
-
-            50% {
-                opacity: 1;
-                transform: scale(1)
-            }
-        }
-
-        /* ── TIMELINE ── */
-        .tl-wrap {
-            background: var(--bg2);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 14px;
-            margin-bottom: 12px
-        }
-
-        .section-title {
-            font-size: .65rem;
-            color: var(--muted2);
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 10px
-        }
-
-        .tl-scroll {
-            display: flex;
-            align-items: stretch;
-            gap: 0;
-            overflow-x: auto;
-            padding-bottom: 6px;
-            scrollbar-width: none;
-            position: relative
-        }
-
-            .tl-scroll::-webkit-scrollbar {
-                display: none
-            }
-
-        .tl-drop {
-            flex: 0 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 44px;
-            min-height: 80px;
-            cursor: pointer;
-            position: relative;
-            z-index: 2;
-            transition: .15s;
-        }
-
-        .tl-drop-inner {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: rgba(232,200,66,.08);
-            border: 1.5px dashed rgba(232,200,66,.5);
-            color: var(--gold);
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: .15s;
-            flex-shrink: 0;
-        }
-
-        .tl-drop:hover .tl-drop-inner, .tl-drop.highlight .tl-drop-inner {
-            background: var(--gold);
-            color: #000;
-            border-style: solid;
-            transform: scale(1.15)
-        }
-
-        .tl-drop-year {
-            text-align: center;
-            font-family: 'JetBrains Mono',monospace;
-            font-size: .58rem;
-            color: var(--gold);
-            margin-top: 4px;
-            opacity: .7
-        }
-
-        .tl-drop.selected .tl-drop-inner {
-            background: var(--gold);
-            border-color: var(--gold);
-            color: #000;
-            box-shadow: 0 0 14px rgba(232,200,66,.5)
-        }
-
-        .tl-card {
-            flex: 0 0 auto;
-            background: var(--bg3);
-            border: 1px solid var(--border2);
-            border-radius: 10px;
-            width: 80px;
-            padding: 8px;
-            text-align: center;
-            margin: 0 2px;
-        }
-
-        .tl-y {
-            font-family: 'JetBrains Mono',monospace;
-            font-size: 1.2rem;
-            font-weight: 500;
-            color: var(--gold)
-        }
-
-        .tl-t {
-            font-size: .6rem;
-            font-weight: 600;
-            margin-top: 3px;
-            line-height: 1.2;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical
-        }
-
-        .tl-a {
-            font-size: .55rem;
-            color: var(--muted2);
-            margin-top: 2px
-        }
-
-        /* Bet zones */
-        .tl-bet-drop {
-            flex: 0 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            width: 54px;
-            min-height: 92px;
-            cursor: pointer;
-            position: relative;
-            z-index: 2;
-            transition: .15s;
-            padding-top: 2px;
-        }
-
-        .tl-bet-inner {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            background: rgba(74,158,255,.08);
-            border: 1.5px dashed rgba(74,158,255,.8);
-            color: var(--blue);
-            font-size: .8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: .15s;
-            flex-shrink: 0;
-            font-weight: 800;
-        }
-
-        .tl-bet-drop:hover .tl-bet-inner {
-            background: rgba(74,158,255,.18);
-            border-style: solid;
-            transform: scale(1.12);
-            box-shadow: 0 0 12px rgba(74,158,255,.2)
-        }
-
-        .tl-bet-drop.selected .tl-bet-inner {
-            background: var(--blue);
-            border-color: var(--blue);
-            color: #000;
-            box-shadow: 0 0 14px rgba(74,158,255,.35)
-        }
-
-        .tl-bet-drop.locked {
-            cursor: default
-        }
-
-            .tl-bet-drop.locked .tl-bet-inner {
-                background: rgba(74,158,255,.18);
-                border-color: rgba(74,158,255,.9);
-                border-style: solid;
-                color: var(--blue)
-            }
-
-        .tl-bet-drop.disabled {
-            cursor: default;
-            opacity: .35
-        }
-
-        .tl-bet-year {
-            text-align: center;
-            font-family: 'JetBrains Mono',monospace;
-            font-size: .55rem;
-            color: var(--blue);
-            margin-top: 3px;
-            opacity: .9
-        }
-
-        .tl-bet-stack {
-            margin-top: 6px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            align-items: center
-        }
-
-        .bet-chip {
-            width: 100%;
-            max-width: 52px;
-            background: rgba(74,158,255,.08);
-            border: 1px solid rgba(74,158,255,.2);
-            color: rgba(255,255,255,.8);
-            border-radius: 8px;
-            padding: 3px 6px;
-            font-size: .55rem;
-            line-height: 1.1;
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .bet-count {
-            position: absolute;
-            top: -2px;
-            right: 8px;
-            background: rgba(74,158,255,.9);
-            border: 1px solid rgba(0,0,0,.35);
-            color: #000;
-            font-family: 'JetBrains Mono',monospace;
-            font-size: .58rem;
-            font-weight: 900;
-            border-radius: 999px;
-            padding: 1px 6px;
-            box-shadow: 0 4px 10px rgba(0,0,0,.3);
-            transform: translateX(50%);
-        }
-
-        /* ── CONFIRM BARS ── */
-        .bet-confirm {
-            background: rgba(74,158,255,.06);
-            border: 1px solid rgba(74,158,255,.25);
-            border-radius: 12px;
-            padding: 12px 14px;
-            margin-bottom: 12px;
-            display: none;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-            .bet-confirm.show {
-                display: flex
-            }
-
-        .bet-label {
-            font-size: .85rem;
-            font-weight: 700;
-            color: var(--blue)
-        }
-
-            .bet-label span {
-                color: var(--text)
-            }
-
-        .btn-bet {
-            padding: 8px 18px;
-            border: none;
-            border-radius: 10px;
-            background: var(--blue);
-            color: #fff;
-            font-family: 'Inter',sans-serif;
-            font-size: .82rem;
-            font-weight: 700;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-            .btn-bet:disabled {
-                opacity: .4;
-                cursor: not-allowed
-            }
-
-        .place-confirm {
-            background: rgba(232,200,66,.06);
-            border: 1px solid rgba(232,200,66,.25);
-            border-radius: 12px;
-            padding: 12px 14px;
-            margin-bottom: 12px;
-            display: none;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-            .place-confirm.show {
-                display: flex
-            }
-
-        .place-label {
-            font-size: .85rem;
-            font-weight: 600;
-            color: var(--gold)
-        }
-
-            .place-label span {
-                color: var(--text)
-            }
-
-        .btn-place {
-            padding: 8px 18px;
-            border: none;
-            border-radius: 10px;
-            background: linear-gradient(135deg,var(--gold),#d4a820);
-            color: #000;
-            font-family: 'Inter',sans-serif;
-            font-size: .82rem;
-            font-weight: 700;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        /* ── TOKEN BUTTONS ── */
-        .token-row {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px
-        }
-
-        .btn-tok {
-            flex: 1;
-            padding: 10px;
-            border: 1.5px solid rgba(232,200,66,.4);
-            background: transparent;
-            color: var(--gold);
-            font-family: 'Inter',sans-serif;
-            font-size: .78rem;
-            font-weight: 600;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: .15s;
-        }
-
-            .btn-tok:disabled {
-                opacity: .3;
-                cursor: not-allowed
-            }
-
-            .btn-tok:not(:disabled):hover {
-                background: var(--gold);
-                color: #000
-            }
-
-        /* ── GUESS BAR ── */
-        .guess-bar {
-            background: var(--bg2);
-            border: 1px solid var(--border2);
-            border-radius: 16px;
-            padding: 12px 14px;
-            margin-bottom: 12px;
-        }
-
-        .guess-bar-title {
-            font-size: .65rem;
-            color: var(--muted2);
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 10px
-        }
-
-        .guess-inputs-row {
-            display: flex;
-            gap: 8px;
-            align-items: center
-        }
-
-            .guess-inputs-row input {
-                flex: 1;
-                padding: 10px 12px;
-                background: rgba(255,255,255,.04);
-                border: 1.5px solid var(--border2);
-                border-radius: 10px;
-                color: var(--text);
-                font-family: 'Inter',sans-serif;
-                font-size: .85rem;
-                outline: none;
-                min-width: 0;
-                transition: .15s;
-            }
-
-                .guess-inputs-row input:focus {
-                    border-color: var(--gold)
-                }
-
-            .guess-inputs-row .btn {
-                flex: 0 0 auto;
-                width: auto;
-                padding: 10px 14px;
-                font-size: .82rem;
-                margin-top: 0;
-                border-radius: 10px
-            }
-
-        .guess-submitted-msg {
-            font-size: .75rem;
-            color: var(--gold);
-            margin-top: 8px;
-            text-align: center
-        }
-
-        /* ── RESULT BOX ── */
-        .result-box {
-            background: var(--bg2);
-            border: 1px solid var(--border2);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 12px;
-            text-align: center;
-            display: none;
-        }
-
-            .result-box.show {
-                display: block
-            }
-
-        .res-status {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 8px
-        }
-
-            .res-status.ok {
-                color: var(--green)
-            }
-
-            .res-status.fail {
-                color: var(--red)
-            }
-
-        .res-tokens {
-            font-size: .8rem;
-            color: var(--muted2);
-            margin-bottom: 14px;
-            line-height: 1.9;
-            white-space: pre-line
-        }
-
-        .guess-winner {
-            color: var(--gold);
-            font-weight: 700
-        }
-
-        .guess-partial {
-            color: var(--blue);
-            font-weight: 700
-        }
-
-        /* ── TOAST ── */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--bg3);
-            border: 1px solid var(--border2);
-            border-radius: 10px;
-            padding: 10px 22px;
-            font-size: .82rem;
-            transition: .3s;
-            z-index: 999;
-            white-space: nowrap;
-            pointer-events: none;
-        }
-
-            .toast.show {
-                transform: translateX(-50%) translateY(0)
-            }
-
-        /* ── LOADING ── */
-        .loading-overlay {
-            position: fixed;
-            inset: 0;
-            background: var(--bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-            .loading-overlay.hidden {
-                display: none
-            }
-
-        .spinner {
-            width: 36px;
-            height: 36px;
-            border: 3px solid var(--border2);
-            border-top-color: var(--gold);
-            border-radius: 50%;
-            animation: spin .8s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg)
-            }
-        }
-
-        .loading-text {
-            color: var(--muted2);
-            font-size: .85rem;
-            letter-spacing: 1px
-        }
-
-        /* ── FINISH ── */
-        .finish-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100%;
-            text-align: center;
-            padding: 24px;
-            background: radial-gradient(ellipse 60% 40% at 50% 30%,rgba(232,200,66,.1) 0%,transparent 70%);
-        }
-
-        .finish-trophy {
-            font-size: 4rem;
-            margin-bottom: 10px;
-            animation: bob 2s ease-in-out infinite
-        }
-
-        @keyframes bob {
-            0%,100% {
-                transform: translateY(0)
-            }
-
-            50% {
-                transform: translateY(-8px)
-            }
-        }
-
-        .finish-winner {
-            font-family: 'Bebas Neue',sans-serif;
-            font-size: 2.8rem;
-            letter-spacing: 4px;
-            color: var(--gold);
-            margin: 8px 0 4px;
-        }
-
-        .finish-sub {
-            font-size: .85rem;
-            color: var(--muted2);
-            margin-bottom: 24px
-        }
-
-        .finish-row {
-            font-size: .88rem;
-            color: var(--muted2);
-            margin: 4px 0
-        }
-
-            .finish-row span {
-                color: var(--text);
-                font-weight: 600
-            }
-
-        /* ── HOW TO PLAY ── */
-        .htp-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 200;
-            background: rgba(0,0,0,0);
-            backdrop-filter: blur(0px);
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            pointer-events: none;
-            transition: background .4s ease,backdrop-filter .4s ease;
-        }
-
-            .htp-overlay.open {
-                background: rgba(0,0,6,.8);
-                backdrop-filter: blur(10px);
-                pointer-events: all
-            }
-
-        .htp-sheet {
-            width: 100%;
-            max-width: 480px;
-            max-height: 92vh;
-            background: #0a0a18;
-            border: 1px solid rgba(232,200,66,.15);
-            border-bottom: none;
-            border-radius: 28px 28px 0 0;
-            overflow: hidden;
-            transform: translateY(110%);
-            transition: transform .5s cubic-bezier(.16,1,.3,1);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .htp-overlay.open .htp-sheet {
-            transform: translateY(0)
-        }
-
-        .htp-drag {
-            width: 40px;
-            height: 4px;
-            background: rgba(255,255,255,.12);
-            border-radius: 4px;
-            margin: 12px auto 0;
-            flex-shrink: 0
-        }
-
-        .htp-header {
-            padding: 18px 24px 16px;
-            border-bottom: 1px solid rgba(255,255,255,.06);
-            flex-shrink: 0
-        }
-
-        .htp-title {
-            font-family: 'Bebas Neue',sans-serif;
-            font-size: 1.8rem;
-            letter-spacing: 3px;
-            background: linear-gradient(135deg,var(--gold),var(--red));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .htp-subtitle {
-            font-size: .72rem;
-            color: var(--muted2);
-            margin-top: 4px;
-            letter-spacing: .5px
-        }
-
-        .htp-body {
-            overflow-y: auto;
-            padding: 20px 20px 36px;
-            flex: 1
-        }
-
-        .htp-section {
-            margin-bottom: 20px;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity .5s ease,transform .5s ease
-        }
-
-        .htp-overlay.open .htp-section {
-            opacity: 1;
-            transform: translateY(0)
-        }
-
-            .htp-overlay.open .htp-section:nth-child(1) {
-                transition-delay: .1s
-            }
-
-            .htp-overlay.open .htp-section:nth-child(2) {
-                transition-delay: .18s
-            }
-
-            .htp-overlay.open .htp-section:nth-child(3) {
-                transition-delay: .26s
-            }
-
-            .htp-overlay.open .htp-section:nth-child(4) {
-                transition-delay: .34s
-            }
-
-            .htp-overlay.open .htp-section:nth-child(5) {
-                transition-delay: .42s
-            }
-
-        .htp-sec-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px
-        }
-
-        .htp-sec-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            flex-shrink: 0
-        }
-
-            .htp-sec-icon.gold {
-                background: rgba(232,200,66,.1);
-                border: 1px solid rgba(232,200,66,.25)
-            }
-
-            .htp-sec-icon.blue {
-                background: rgba(74,158,255,.1);
-                border: 1px solid rgba(74,158,255,.25)
-            }
-
-            .htp-sec-icon.green {
-                background: rgba(0,210,106,.1);
-                border: 1px solid rgba(0,210,106,.25)
-            }
-
-            .htp-sec-icon.red {
-                background: rgba(232,64,66,.1);
-                border: 1px solid rgba(232,64,66,.25)
-            }
-
-            .htp-sec-icon.purple {
-                background: rgba(168,85,247,.1);
-                border: 1px solid rgba(168,85,247,.25)
-            }
-
-        .htp-sec-title {
-            font-size: .95rem;
-            font-weight: 700
-        }
-
-        .htp-card {
-            background: var(--bg2);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 14px 16px;
-            margin-bottom: 8px
-        }
-
-        .step-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px
-        }
-
-        .step-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px
-        }
-
-        .step-num {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--gold);
-            color: #000;
-            font-size: .68rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            margin-top: 2px
-        }
-
-        .step-text {
-            font-size: .82rem;
-            line-height: 1.6;
-            color: rgba(240,240,248,.8)
-        }
-
-            .step-text strong {
-                color: #fff
-            }
-
-        .htp-close {
-            display: block;
-            width: calc(100% - 40px);
-            margin: 0 auto 16px;
-            padding: 14px;
-            background: linear-gradient(135deg,var(--gold),#d4a820);
-            color: #000;
-            font-family: 'Inter',sans-serif;
-            font-size: .95rem;
-            font-weight: 700;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: .2s;
-            flex-shrink: 0;
-        }
-
-            .htp-close:hover {
-                box-shadow: 0 6px 24px rgba(232,200,66,.4)
-            }
-
-        /* ── COIN GRID ── */
-        .coin-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px
-        }
-
-        .coin-item {
-            background: var(--bg3);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px;
-            text-align: center
-        }
-
-        .coin-item-icon {
-            font-size: 1.4rem;
-            margin-bottom: 6px
-        }
-
-        .coin-item-title {
-            font-size: .78rem;
-            font-weight: 700;
-            margin-bottom: 4px
-        }
-
-        .coin-item-desc {
-            font-size: .66rem;
-            color: var(--muted2);
-            line-height: 1.4
-        }
-
-        .coin-earn {
-            border-color: rgba(232,200,66,.2)
-        }
-
-        .coin-spend {
-            border-color: rgba(74,158,255,.15)
-        }
-
-        ::-webkit-scrollbar {
-            width: 3px;
-            height: 3px
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border2);
-            border-radius: 3px
-        }
+            background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px;
+            padding: 12px 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px;
+        }
+        .listener-icon { font-size: 1.4rem; flex-shrink: 0 }
+        .listener-info .listener-song { font-size: .88rem; font-weight: 600; color: var(--muted2) }
+        .listener-info .listener-hint { font-size: .7rem; color: var(--muted); margin-top: 2px }
+        .projector-dots { display: flex; align-items: center; gap: 4px; margin-left: auto }
+        .projector-dots span { display: block; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: blink 1.2s ease-in-out infinite }
+        .projector-dots span:nth-child(2) { animation-delay: .2s }
+        .projector-dots span:nth-child(3) { animation-delay: .4s }
+        @keyframes blink { 0%,100% { opacity: .2; transform: scale(.8) } 50% { opacity: 1; transform: scale(1) } }
+
+        /* Timeline */
+        .tl-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 14px; margin-bottom: 12px }
+        .section-title { font-size: .65rem; color: var(--muted2); font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px }
+        .tl-scroll { display: flex; align-items: stretch; gap: 0; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; position: relative }
+        .tl-scroll::-webkit-scrollbar { display: none }
+        .tl-drop { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 44px; min-height: 80px; cursor: pointer; position: relative; z-index: 2; transition: .15s }
+        .tl-drop-inner { width: 28px; height: 28px; border-radius: 50%; background: rgba(232,200,66,.08); border: 1.5px dashed rgba(232,200,66,.5); color: var(--gold); font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: .15s; flex-shrink: 0 }
+        .tl-drop:hover .tl-drop-inner, .tl-drop.highlight .tl-drop-inner { background: var(--gold); color: #000; border-style: solid; transform: scale(1.15) }
+        .tl-drop-year { text-align: center; font-family: 'JetBrains Mono',monospace; font-size: .58rem; color: var(--gold); margin-top: 4px; opacity: .7 }
+        .tl-drop.selected .tl-drop-inner { background: var(--gold); border-color: var(--gold); color: #000; box-shadow: 0 0 14px rgba(232,200,66,.5) }
+        .tl-card { flex: 0 0 auto; background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; width: 80px; padding: 8px; text-align: center; margin: 0 2px }
+        .tl-y { font-family: 'JetBrains Mono',monospace; font-size: 1.2rem; font-weight: 500; color: var(--gold) }
+        .tl-t { font-size: .6rem; font-weight: 600; margin-top: 3px; line-height: 1.2; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical }
+        .tl-a { font-size: .55rem; color: var(--muted2); margin-top: 2px }
+        .tl-bet-drop { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 54px; min-height: 92px; cursor: pointer; position: relative; z-index: 2; transition: .15s; padding-top: 2px }
+        .tl-bet-inner { width: 26px; height: 26px; border-radius: 50%; background: rgba(74,158,255,.08); border: 1.5px dashed rgba(74,158,255,.8); color: var(--blue); font-size: .8rem; display: flex; align-items: center; justify-content: center; transition: .15s; flex-shrink: 0; font-weight: 800 }
+        .tl-bet-drop:hover .tl-bet-inner { background: rgba(74,158,255,.18); border-style: solid; transform: scale(1.12); box-shadow: 0 0 12px rgba(74,158,255,.2) }
+        .tl-bet-drop.selected .tl-bet-inner { background: var(--blue); border-color: var(--blue); color: #000; box-shadow: 0 0 14px rgba(74,158,255,.35) }
+        .tl-bet-drop.locked { cursor: default }
+        .tl-bet-drop.locked .tl-bet-inner { background: rgba(74,158,255,.18); border-color: rgba(74,158,255,.9); border-style: solid; color: var(--blue) }
+        .tl-bet-drop.disabled { cursor: default; opacity: .35 }
+        .tl-bet-year { text-align: center; font-family: 'JetBrains Mono',monospace; font-size: .55rem; color: var(--blue); margin-top: 3px; opacity: .9 }
+        .tl-bet-stack { margin-top: 6px; width: 100%; display: flex; flex-direction: column; gap: 4px; align-items: center }
+        .bet-chip { width: 100%; max-width: 52px; background: rgba(74,158,255,.08); border: 1px solid rgba(74,158,255,.2); color: rgba(255,255,255,.8); border-radius: 8px; padding: 3px 6px; font-size: .55rem; line-height: 1.1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+        .bet-count { position: absolute; top: -2px; right: 8px; background: rgba(74,158,255,.9); border: 1px solid rgba(0,0,0,.35); color: #000; font-family: 'JetBrains Mono',monospace; font-size: .58rem; font-weight: 900; border-radius: 999px; padding: 1px 6px; box-shadow: 0 4px 10px rgba(0,0,0,.3); transform: translateX(50%) }
+
+        /* Confirm bars */
+        .bet-confirm { background: rgba(74,158,255,.06); border: 1px solid rgba(74,158,255,.25); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; display: none; align-items: center; justify-content: space-between; gap: 10px }
+        .bet-confirm.show { display: flex }
+        .bet-label { font-size: .85rem; font-weight: 700; color: var(--blue) }
+        .bet-label span { color: var(--text) }
+        .btn-bet { padding: 8px 18px; border: none; border-radius: 10px; background: var(--blue); color: #fff; font-family: 'Inter',sans-serif; font-size: .82rem; font-weight: 700; cursor: pointer; white-space: nowrap }
+        .btn-bet:disabled { opacity: .4; cursor: not-allowed }
+        .place-confirm { background: rgba(232,200,66,.06); border: 1px solid rgba(232,200,66,.25); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; display: none; align-items: center; justify-content: space-between; gap: 10px }
+        .place-confirm.show { display: flex }
+        .place-label { font-size: .85rem; font-weight: 600; color: var(--gold) }
+        .place-label span { color: var(--text) }
+        .btn-place { padding: 8px 18px; border: none; border-radius: 10px; background: linear-gradient(135deg,var(--gold),#d4a820); color: #000; font-family: 'Inter',sans-serif; font-size: .82rem; font-weight: 700; cursor: pointer; white-space: nowrap }
+
+        /* Token buttons */
+        .token-row { display: flex; gap: 8px; margin-bottom: 12px }
+        .btn-tok { flex: 1; padding: 10px; border: 1.5px solid rgba(232,200,66,.4); background: transparent; color: var(--gold); font-family: 'Inter',sans-serif; font-size: .78rem; font-weight: 600; border-radius: 10px; cursor: pointer; transition: .15s }
+        .btn-tok:disabled { opacity: .3; cursor: not-allowed }
+        .btn-tok:not(:disabled):hover { background: var(--gold); color: #000 }
+
+        /* Guess bar */
+        .guess-bar { background: var(--bg2); border: 1px solid var(--border2); border-radius: 16px; padding: 12px 14px; margin-bottom: 12px }
+        .guess-bar-title { font-size: .65rem; color: var(--muted2); font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px }
+        .guess-inputs-row { display: flex; gap: 8px; align-items: center }
+        .guess-inputs-row input { flex: 1; padding: 10px 12px; background: rgba(255,255,255,.04); border: 1.5px solid var(--border2); border-radius: 10px; color: var(--text); font-family: 'Inter',sans-serif; font-size: .85rem; outline: none; min-width: 0; transition: .15s }
+        .guess-inputs-row input:focus { border-color: var(--gold) }
+        .guess-inputs-row .btn { flex: 0 0 auto; width: auto; padding: 10px 14px; font-size: .82rem; margin-top: 0; border-radius: 10px }
+        .guess-submitted-msg { font-size: .75rem; color: var(--gold); margin-top: 8px; text-align: center }
+
+        /* Result box */
+        .result-box { background: var(--bg2); border: 1px solid var(--border2); border-radius: 16px; padding: 16px; margin-bottom: 12px; text-align: center; display: none }
+        .result-box.show { display: block }
+        .res-status { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px }
+        .res-status.ok { color: var(--green) }
+        .res-status.fail { color: var(--red) }
+        .res-tokens { font-size: .8rem; color: var(--muted2); margin-bottom: 14px; line-height: 1.9; white-space: pre-line }
+        .guess-winner { color: var(--gold); font-weight: 700 }
+        .guess-partial { color: var(--blue); font-weight: 700 }
+
+        /* Toast */
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 10px 22px; font-size: .82rem; transition: .3s; z-index: 999; white-space: nowrap; pointer-events: none }
+        .toast.show { transform: translateX(-50%) translateY(0) }
+
+        /* Loading */
+        .loading-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 100; flex-direction: column; gap: 16px }
+        .loading-overlay.hidden { display: none }
+        .spinner { width: 36px; height: 36px; border: 3px solid var(--border2); border-top-color: var(--gold); border-radius: 50%; animation: spin .8s linear infinite }
+        @keyframes spin { to { transform: rotate(360deg) } }
+        .loading-text { color: var(--muted2); font-size: .85rem; letter-spacing: 1px }
+
+        /* Finish */
+        .finish-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100%; text-align: center; padding: 24px; background: radial-gradient(ellipse 60% 40% at 50% 30%,rgba(232,200,66,.1) 0%,transparent 70%) }
+        .finish-trophy { font-size: 4rem; margin-bottom: 10px; animation: bob 2s ease-in-out infinite }
+        @keyframes bob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-8px) } }
+        .finish-winner { font-family: 'Bebas Neue',sans-serif; font-size: 2.8rem; letter-spacing: 4px; color: var(--gold); margin: 8px 0 4px }
+        .finish-sub { font-size: .85rem; color: var(--muted2); margin-bottom: 24px }
+        .finish-row { font-size: .88rem; color: var(--muted2); margin: 4px 0 }
+        .finish-row span { color: var(--text); font-weight: 600 }
+
+        /* How to play */
+        .htp-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0); backdrop-filter: blur(0px); display: flex; align-items: flex-end; justify-content: center; pointer-events: none; transition: background .4s ease,backdrop-filter .4s ease }
+        .htp-overlay.open { background: rgba(0,0,6,.8); backdrop-filter: blur(10px); pointer-events: all }
+        .htp-sheet { width: 100%; max-width: 480px; max-height: 92vh; background: #0a0a18; border: 1px solid rgba(232,200,66,.15); border-bottom: none; border-radius: 28px 28px 0 0; overflow: hidden; transform: translateY(110%); transition: transform .5s cubic-bezier(.16,1,.3,1); display: flex; flex-direction: column }
+        .htp-overlay.open .htp-sheet { transform: translateY(0) }
+        .htp-drag { width: 40px; height: 4px; background: rgba(255,255,255,.12); border-radius: 4px; margin: 12px auto 0; flex-shrink: 0 }
+        .htp-header { padding: 18px 24px 16px; border-bottom: 1px solid rgba(255,255,255,.06); flex-shrink: 0 }
+        .htp-title { font-family: 'Bebas Neue',sans-serif; font-size: 1.8rem; letter-spacing: 3px; background: linear-gradient(135deg,var(--gold),var(--red)); -webkit-background-clip: text; -webkit-text-fill-color: transparent }
+        .htp-subtitle { font-size: .72rem; color: var(--muted2); margin-top: 4px; letter-spacing: .5px }
+        .htp-body { overflow-y: auto; padding: 20px 20px 36px; flex: 1 }
+        .htp-section { margin-bottom: 20px; opacity: 0; transform: translateY(20px); transition: opacity .5s ease,transform .5s ease }
+        .htp-overlay.open .htp-section { opacity: 1; transform: translateY(0) }
+        .htp-overlay.open .htp-section:nth-child(1) { transition-delay: .1s }
+        .htp-overlay.open .htp-section:nth-child(2) { transition-delay: .18s }
+        .htp-overlay.open .htp-section:nth-child(3) { transition-delay: .26s }
+        .htp-overlay.open .htp-section:nth-child(4) { transition-delay: .34s }
+        .htp-overlay.open .htp-section:nth-child(5) { transition-delay: .42s }
+        .htp-sec-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px }
+        .htp-sec-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0 }
+        .htp-sec-icon.gold { background: rgba(232,200,66,.1); border: 1px solid rgba(232,200,66,.25) }
+        .htp-sec-icon.blue { background: rgba(74,158,255,.1); border: 1px solid rgba(74,158,255,.25) }
+        .htp-sec-icon.green { background: rgba(0,210,106,.1); border: 1px solid rgba(0,210,106,.25) }
+        .htp-sec-icon.red { background: rgba(232,64,66,.1); border: 1px solid rgba(232,64,66,.25) }
+        .htp-sec-icon.purple { background: rgba(168,85,247,.1); border: 1px solid rgba(168,85,247,.25) }
+        .htp-sec-title { font-size: .95rem; font-weight: 700 }
+        .htp-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 8px }
+        .step-list { display: flex; flex-direction: column; gap: 10px }
+        .step-item { display: flex; align-items: flex-start; gap: 12px }
+        .step-num { width: 24px; height: 24px; border-radius: 50%; background: var(--gold); color: #000; font-size: .68rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px }
+        .step-text { font-size: .82rem; line-height: 1.6; color: rgba(240,240,248,.8) }
+        .step-text strong { color: #fff }
+        .htp-close { display: block; width: calc(100% - 40px); margin: 0 auto 16px; padding: 14px; background: linear-gradient(135deg,var(--gold),#d4a820); color: #000; font-family: 'Inter',sans-serif; font-size: .95rem; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; transition: .2s; flex-shrink: 0 }
+        .htp-close:hover { box-shadow: 0 6px 24px rgba(232,200,66,.4) }
+        .coin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px }
+        .coin-item { background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center }
+        .coin-item-icon { font-size: 1.4rem; margin-bottom: 6px }
+        .coin-item-title { font-size: .78rem; font-weight: 700; margin-bottom: 4px }
+        .coin-item-desc { font-size: .66rem; color: var(--muted2); line-height: 1.4 }
+        .coin-earn { border-color: rgba(232,200,66,.2) }
+        .coin-spend { border-color: rgba(74,158,255,.15) }
+
+        ::-webkit-scrollbar { width: 3px; height: 3px }
+        ::-webkit-scrollbar-track { background: transparent }
+        ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px }
     </style>
 </head>
 <body>
@@ -1861,7 +486,7 @@
         <div class="loading-text" id="loadingText">LOADING</div>
     </div>
 
-    <!-- ═══════════════════════════════ HOW TO PLAY ═══════════════════════════════ -->
+    <!-- HOW TO PLAY -->
     <div class="htp-overlay" id="htpOverlay" onclick="htpClickOutside(event)">
         <div class="htp-sheet" id="htpSheet">
             <div class="htp-drag"></div>
@@ -1870,116 +495,63 @@
                 <div class="htp-subtitle">Everything you need to know before the curtain rises</div>
             </div>
             <div class="htp-body">
-
                 <div class="htp-section">
                     <div class="htp-sec-header"><div class="htp-sec-icon gold">🏆</div><div class="htp-sec-title">Objective</div></div>
-                    <div class="htp-card">
-                        <div style="font-size:.85rem;line-height:1.7;color:rgba(240,240,248,.85)">
-                            Be the first to place <strong id="htpWinTarget">8</strong> movies on your timeline — in the correct chronological order — and you win!
-                        </div>
-                    </div>
+                    <div class="htp-card"><div style="font-size:.85rem;line-height:1.7;color:rgba(240,240,248,.85)">Be the first to place <strong id="htpWinTarget">8</strong> movies on your timeline — in the correct chronological order — and you win!</div></div>
                 </div>
-
                 <div class="htp-section">
                     <div class="htp-sec-header"><div class="htp-sec-icon red">🎬</div><div class="htp-sec-title">On Your Turn</div></div>
                     <div class="htp-card">
                         <div class="step-list">
-                            <div class="step-item"><div class="step-num">1</div><div class="step-text">Press <strong>▶ PLAY CLIP</strong> — a <strong>15-second scene</strong> from a hidden movie plays in cinematic theater mode</div></div>
+                            <div class="step-item"><div class="step-num">1</div><div class="step-text">Press <strong>▶ PLAY CLIP</strong> — a <strong>30-second scene</strong> plays with our custom controls</div></div>
                             <div class="step-item"><div class="step-num">2</div><div class="step-text">Choose where the movie fits on <strong>your timeline</strong> — tap the <strong>+</strong> between cards</div></div>
-                            <div class="step-item"><div class="step-num">3</div><div class="step-text">The card flips — the movie title, director, and year are revealed. <strong>Correct placement = new card!</strong></div></div>
-                            <div class="step-item"><div class="step-num">4</div><div class="step-text">Wrong placement = no card gained. Turn passes to the next player.</div></div>
+                            <div class="step-item"><div class="step-num">3</div><div class="step-text">The card flips — title, director, and year are revealed. <strong>Correct = new card!</strong></div></div>
+                            <div class="step-item"><div class="step-num">4</div><div class="step-text">Wrong placement = no card. Turn passes on.</div></div>
                         </div>
                     </div>
                 </div>
-
                 <div class="htp-section">
                     <div class="htp-sec-header"><div class="htp-sec-icon gold">🪙</div><div class="htp-sec-title">Coins — Earn &amp; Spend</div></div>
                     <div class="htp-card">
-                        <div style="font-size:.72rem;color:var(--muted2);margin-bottom:10px;font-weight:600">Earn coins by correctly guessing the movie:</div>
+                        <div style="font-size:.72rem;color:var(--muted2);margin-bottom:10px;font-weight:600">Earn coins by guessing:</div>
                         <div class="coin-grid">
-                            <div class="coin-item coin-earn"><div class="coin-item-icon">🎬+📅</div><div class="coin-item-title" style="color:var(--gold)">+1 🪙</div><div class="coin-item-desc">Guessed both the <strong>movie title AND year</strong> correctly</div></div>
-                            <div class="coin-item coin-earn"><div class="coin-item-icon">🎬 or 📅</div><div class="coin-item-title" style="color:var(--gold)">+0.5 🪙</div><div class="coin-item-desc">Guessed the title <strong>OR</strong> the year — but not both</div></div>
+                            <div class="coin-item coin-earn"><div class="coin-item-icon">🎬+📅</div><div class="coin-item-title" style="color:var(--gold)">+1 🪙</div><div class="coin-item-desc">Guessed both title AND year</div></div>
+                            <div class="coin-item coin-earn"><div class="coin-item-icon">🎬 or 📅</div><div class="coin-item-title" style="color:var(--gold)">+0.5 🪙</div><div class="coin-item-desc">Guessed title OR year only</div></div>
                         </div>
                     </div>
                     <div class="htp-card">
                         <div style="font-size:.72rem;color:var(--muted2);margin-bottom:10px;font-weight:600">Spend coins on power-ups:</div>
                         <div class="coin-grid">
-                            <div class="coin-item coin-spend"><div class="coin-item-icon">🔄</div><div class="coin-item-title" style="color:var(--blue)">Swap Movie</div><div class="coin-item-desc">Costs <strong>1 🪙</strong> — get a different movie clip</div></div>
-                            <div class="coin-item coin-spend"><div class="coin-item-icon">🎁</div><div class="coin-item-title" style="color:var(--blue)">Safe Spot</div><div class="coin-item-desc">Costs <strong>3 🪙</strong> — auto-places in the correct position!</div></div>
+                            <div class="coin-item coin-spend"><div class="coin-item-icon">🔄</div><div class="coin-item-title" style="color:var(--blue)">Swap Movie</div><div class="coin-item-desc">Costs <strong>1 🪙</strong></div></div>
+                            <div class="coin-item coin-spend"><div class="coin-item-icon">🎁</div><div class="coin-item-title" style="color:var(--blue)">Safe Spot</div><div class="coin-item-desc">Costs <strong>3 🪙</strong> — auto-places!</div></div>
                         </div>
                     </div>
                 </div>
-
                 <div class="htp-section">
                     <div class="htp-sec-header"><div class="htp-sec-icon blue">🎯</div><div class="htp-sec-title">Spectator Bets</div></div>
                     <div class="htp-card">
                         <div class="step-list">
-                            <div class="step-item"><div class="step-num">1</div><div class="step-text">When it's <strong>not your turn</strong> — you can bet on where the active player will place the movie</div></div>
-                            <div class="step-item"><div class="step-num">2</div><div class="step-text">Tap the 🪙 slot on their timeline. Costs <strong>1 🪙</strong> per bet</div></div>
-                            <div class="step-item"><div class="step-num">3</div><div class="step-text">If the <strong>active player gets it wrong</strong> but <strong>you bet the correct slot</strong> — the movie goes onto YOUR timeline! 🎉</div></div>
-                            <div class="step-item"><div class="step-num">4</div><div class="step-text">If the active player gets it right — all bets lose, even correct ones.</div></div>
+                            <div class="step-item"><div class="step-num">1</div><div class="step-text">When it's <strong>not your turn</strong> — bet on where they'll place it</div></div>
+                            <div class="step-item"><div class="step-num">2</div><div class="step-text">Tap the 🪙 slot. Costs <strong>1 🪙</strong> per bet</div></div>
+                            <div class="step-item"><div class="step-num">3</div><div class="step-text">Active player wrong + your bet correct = card goes on YOUR timeline! 🎉</div></div>
                         </div>
                     </div>
                 </div>
-
-                <div class="htp-section">
-                    <div class="htp-sec-header"><div class="htp-sec-icon green">✍️</div><div class="htp-sec-title">Guessing the Movie</div></div>
-                    <div class="htp-card">
-                        <div class="step-list">
-                            <div class="step-item"><div class="step-num">🎬</div><div class="step-text"><strong>Everyone can guess</strong> on every turn — even if it's not yours</div></div>
-                            <div class="step-item"><div class="step-num">📅</div><div class="step-text">Guess the <strong>movie title</strong> AND the <strong>release year</strong> for up to 1 full coin</div></div>
-                            <div class="step-item"><div class="step-num">✓</div><div class="step-text">Fuzzy matching — close spelling, partial names, all count. Type and hit ✓</div></div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="htp-section">
                     <div class="htp-sec-header"><div class="htp-sec-icon purple">💡</div><div class="htp-sec-title">Pro Tips</div></div>
                     <div class="htp-card">
                         <div class="step-list">
-                            <div class="step-item"><div class="step-num">🪙</div><div class="step-text">Save <strong>Safe Spot (3🪙)</strong> for movies you truly can't place — it's a game-changer in tight races</div></div>
-                            <div class="step-item"><div class="step-num">🎯</div><div class="step-text">Bet wisely — <strong>1🪙 risked vs. a free card gained</strong> is excellent value if you're confident</div></div>
-                            <div class="step-item"><div class="step-num">⚡</div><div class="step-text">Guessing both title + year = <strong>1 full coin</strong> — always worth trying even on tough clips!</div></div>
+                            <div class="step-item"><div class="step-num">🪙</div><div class="step-text">Save <strong>Safe Spot (3🪙)</strong> for movies you truly can't place</div></div>
+                            <div class="step-item"><div class="step-num">⚡</div><div class="step-text">Guessing both title + year = <strong>1 full coin</strong> — always try!</div></div>
                         </div>
                     </div>
                 </div>
-
             </div>
             <button class="htp-close" onclick="closeHtp()">🎬 LET'S ROLL!</button>
         </div>
     </div>
 
-    <!-- ═══════════════════════════════ YOUTUBE THEATER ═══════════════════════════════ -->
-    <div class="yt-overlay" id="ytOverlay" onclick="ytOverlayClick(event)">
-        <div class="yt-theater" id="ytTheater">
-            <div class="yt-title-bar">
-                <div class="yt-now-playing">▶ NOW SCREENING</div>
-                <button class="yt-close-btn" onclick="closeYtOverlay()">✕</button>
-            </div>
-            <div class="yt-frame-top">
-                <div class="yt-frame-hole"></div><div class="yt-frame-hole"></div><div class="yt-frame-hole"></div>
-                <div class="yt-frame-hole"></div><div class="yt-frame-hole"></div><div class="yt-frame-hole"></div>
-                <div class="yt-frame-hole"></div><div class="yt-frame-hole"></div><div class="yt-frame-hole"></div>
-            </div>
-            <div class="yt-screen">
-                <div class="yt-curtain-left"></div>
-                <div id="ytIframeContainer"></div>
-                <div class="yt-curtain-right"></div>
-            </div>
-            <div class="yt-frame-bottom">
-                <div class="yt-frame-hole"></div><div class="yt-frame-hole"></div><div class="yt-frame-hole"></div>
-                <div class="yt-frame-hole"></div><div class="yt-frame-hole"></div><div class="yt-frame-hole"></div>
-                <div class="yt-frame-hole"></div><div class="yt-frame-hole"></div><div class="yt-frame-hole"></div>
-            </div>
-            <div class="yt-countdown">
-                <div class="yt-countdown-bar"><div class="yt-countdown-fill" id="ytCountdownFill"></div></div>
-                <div class="yt-countdown-lbl" id="ytCountdownLbl">15s</div>
-            </div>
-            <div class="yt-hint-bar" id="ytHintBar">🎬 Watch the clip — where does this fit on your timeline?</div>
-        </div>
-    </div>
-
-    <!-- ═══════════════════════════════ LOBBY ═══════════════════════════════ -->
+    <!-- LOBBY -->
     <div id="lobbyScreen" class="screen active">
         <div class="logo">
             <div class="logo-mark">🎬</div>
@@ -2021,10 +593,7 @@
             </div>
             <div id="joinForm" style="display:none">
                 <div class="field"><label>Your Name</label><input type="text" id="joinName" placeholder="Enter your name" maxlength="20" autocomplete="off"></div>
-                <div class="field">
-                    <label>Room Code</label>
-                    <input type="text" id="joinCode" placeholder="ABCD" maxlength="4" style="text-transform:uppercase;letter-spacing:6px;" autocomplete="off">
-                </div>
+                <div class="field"><label>Room Code</label><input type="text" id="joinCode" placeholder="ABCD" maxlength="4" style="text-transform:uppercase;letter-spacing:6px;" autocomplete="off"></div>
                 <button class="btn" onclick="joinRoom()">🚪 Join Room</button>
                 <button class="btn-how" onclick="openHtp()">❓ How to Play</button>
                 <div id="joinError" class="err"></div>
@@ -2033,7 +602,7 @@
         <div class="lobby-footer">CINETIMELINE · by <strong>CineAdmin</strong> 🎬</div>
     </div>
 
-    <!-- ═══════════════════════════════ WAIT SCREEN ═══════════════════════════════ -->
+    <!-- WAIT SCREEN -->
     <div id="waitScreen" class="screen">
         <div class="wait-box">
             <div class="code-display">
@@ -2052,7 +621,7 @@
         </div>
     </div>
 
-    <!-- ═══════════════════════════════ GAME SCREEN ═══════════════════════════════ -->
+    <!-- GAME SCREEN -->
     <div id="gameScreen" class="screen">
         <div class="game-wrap">
             <div class="gh">
@@ -2068,12 +637,41 @@
 
             <!-- Movie card area -->
             <div class="movie-card-wrap">
+                <!-- Cinema card -->
                 <div class="cinema-card" id="cinemaCard">
-
-                    <button class="play-cinema-btn" id="playCinemaBtn" onclick="openYtOverlay()" style="display:none">
-                        <div class="play-circle">▶</div>
-                    </button>
+                    <!-- Idle overlay -->
+                    <div class="cinema-idle" id="cinemaIdle">
+                        <div class="cinema-idle-icon"></div>
+                        <div class="cinema-idle-text"></div>
+                    </div>
+                    <!-- Video area -->
+                    <div class="cinema-video-area" id="cinemaVideoArea">
+                        <div id="ytPlayerDiv"></div>
+                    </div>
+                    <!-- Custom controls (no stop button, no countdown pill) -->
+                    <div class="cinema-controls" id="cinemaControls" style="display:none">
+                        <!-- Progress row -->
+                        <div class="ctrl-progress-row">
+                            <span class="ctrl-time" id="ctrlCurrentTime">0:00</span>
+                            <input type="range" class="ctrl-seek" id="ctrlSeek" min="0" max="30" step="0.5" value="0">
+                            <span class="ctrl-time" id="ctrlDuration">0:30</span>
+                        </div>
+                        <!-- Buttons + volume row — stop button REMOVED, countdown pill REMOVED -->
+                        <div class="ctrl-btns-row">
+                            <button class="ctrl-btn primary" id="ctrlPlayPause" title="Play / Pause">▶</button>
+                            <div class="ctrl-volume-wrap">
+                                <span class="ctrl-vol-icon" id="ctrlVolIcon" onclick="toggleMute()">🔊</span>
+                                <input type="range" class="ctrl-vol" id="ctrlVolume" min="0" max="100" value="100">
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Play button — centered on the cinema card (shown when idle) -->
+                <button class="play-overlay-btn" id="playOverlayBtn" style="display:none" onclick="openYtOverlay()">
+                    <div class="play-overlay-circle">▶</div>
+                </button>
+
                 <div class="revealed-card" id="revealedCard" style="display:none">
                     <div class="rv-info">
                         <div class="rv-title" id="rvTitle">—</div>
@@ -2144,68 +742,234 @@
 
     <div class="toast" id="toast"></div>
 
+    <!-- YouTube IFrame Player API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
     <script>
-        let ytCountdownTimer = null;
+        // ═══════════════════════════════════════════
+        //  YOUTUBE PLAYER — full IFrame API control
+        // ═══════════════════════════════════════════
+        let ytPlayer = null;
+        let ytReady = false;
+        let ytProgressTimer = null;
+        let ytClipStart = 0;
+        let ytClipEnd = 30;
+        let ytMuted = false;
+        let ytIsPlaying = false;
         let currentYtId = null;
         let currentYtStart = 0;
 
+        window.onYouTubeIframeAPIReady = function () { ytReady = true };
+
+        function createYtPlayer(videoId, startSec) {
+            ytClipStart = startSec || 0;
+            ytClipEnd = ytClipStart + 30;
+
+            if (ytPlayer) { ytPlayer.destroy(); ytPlayer = null }
+
+            ytPlayer = new YT.Player('ytPlayerDiv', {
+                width: '100%',
+                height: '100%',
+                videoId: videoId,
+                playerVars: {
+                    autoplay: 1,
+                    start: Math.floor(ytClipStart),
+                    end: Math.floor(ytClipEnd),
+                    controls: 0,
+                    modestbranding: 1,
+                    rel: 0,
+                    showinfo: 0,
+                    iv_load_policy: 3,
+                    disablekb: 1,
+                    fs: 0,
+                    playsinline: 1,
+                    mute: 0,
+                    cc_load_policy: 0,
+                    origin: window.location.origin
+                },
+                events: {
+                    onReady: function (e) {
+                        e.target.setVolume(100);
+                        e.target.playVideo();
+                        startControlsUI();
+                    },
+                    onStateChange: function (e) {
+                        if (e.data === YT.PlayerState.PLAYING) {
+                            ytIsPlaying = true;
+                            document.getElementById('ctrlPlayPause').textContent = '⏸';
+                        } else if (e.data === YT.PlayerState.PAUSED) {
+                            ytIsPlaying = false;
+                            document.getElementById('ctrlPlayPause').textContent = '▶';
+                        } else if (e.data === YT.PlayerState.ENDED) {
+                            ytIsPlaying = false;
+                            document.getElementById('ctrlPlayPause').textContent = '▶';
+                            stopProgressTimer();
+                            // Close the player naturally when clip ends
+                            closeYtOverlay();
+                        }
+                    }
+                }
+            });
+        }
+
+        function startControlsUI() {
+            // Hide idle, show controls
+            document.getElementById('cinemaIdle').style.display = 'none';
+            document.getElementById('cinemaControls').style.display = 'flex';
+            // Hide the play button while video is open
+            const pb = document.getElementById('playOverlayBtn');
+            if (pb) pb.style.display = 'none';
+
+            // Set duration display based on clip length
+            const clipLen = ytClipEnd - ytClipStart;
+            document.getElementById('ctrlSeek').max = clipLen;
+            document.getElementById('ctrlDuration').textContent = formatTime(clipLen);
+            document.getElementById('ctrlSeek').value = 0;
+            document.getElementById('ctrlSeek').style.setProperty('--seek-pct', '0%');
+            document.getElementById('ctrlCurrentTime').textContent = '0:00';
+
+            // Progress polling — drives the seek bar & time display
+            stopProgressTimer();
+            ytProgressTimer = setInterval(updateProgress, 200);
+        }
+
+        function formatTime(s) {
+            const sec = Math.floor(s);
+            return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
+        }
+
+        function updateProgress() {
+            if (!ytPlayer || typeof ytPlayer.getCurrentTime !== 'function') return;
+            try {
+                const elapsed = ytPlayer.getCurrentTime() - ytClipStart;
+                const clipLen = ytClipEnd - ytClipStart;
+                const clamped = Math.max(0, Math.min(clipLen, elapsed));
+                const pct = (clamped / clipLen) * 100;
+
+                const seek = document.getElementById('ctrlSeek');
+                // Only update slider if user isn't dragging it
+                if (seek && document.activeElement !== seek) {
+                    seek.value = clamped;
+                    seek.style.setProperty('--seek-pct', pct.toFixed(1) + '%');
+                }
+
+                const el = document.getElementById('ctrlCurrentTime');
+                if (el) el.textContent = formatTime(clamped);
+
+                // Close when we reach the actual end of the clip
+                if (elapsed >= clipLen - 0.3 && ytIsPlaying) {
+                    stopProgressTimer();
+                    closeYtOverlay();
+                }
+            } catch (e) { }
+        }
+
+        function stopProgressTimer() {
+            if (ytProgressTimer) { clearInterval(ytProgressTimer); ytProgressTimer = null }
+        }
+
+        // ── Control actions ──
+        window.ctrlTogglePlay = function () {
+            if (!ytPlayer) return;
+            if (ytIsPlaying) { ytPlayer.pauseVideo() }
+            else { ytPlayer.playVideo() }
+        };
+
+        window.ctrlSeekTo = function (val) {
+            if (!ytPlayer) return;
+            const target = ytClipStart + parseFloat(val);
+            ytPlayer.seekTo(target, true);
+            // Update the seek bar fill immediately when scrubbing
+            const clipLen = ytClipEnd - ytClipStart;
+            const pct = (parseFloat(val) / clipLen) * 100;
+            const seek = document.getElementById('ctrlSeek');
+            if (seek) seek.style.setProperty('--seek-pct', pct.toFixed(1) + '%');
+            document.getElementById('ctrlCurrentTime').textContent = formatTime(parseFloat(val));
+        };
+
+        window.toggleMute = function () {
+            if (!ytPlayer) return;
+            if (ytMuted) {
+                ytPlayer.unMute();
+                ytPlayer.setVolume(document.getElementById('ctrlVolume').value);
+                document.getElementById('ctrlVolIcon').textContent = '🔊';
+            } else {
+                ytPlayer.mute();
+                document.getElementById('ctrlVolIcon').textContent = '🔇';
+            }
+            ytMuted = !ytMuted;
+        };
+
+        window.ctrlSetVolume = function (val) {
+            if (!ytPlayer) return;
+            ytPlayer.setVolume(parseInt(val));
+            ytMuted = false;
+            document.getElementById('ctrlVolIcon').textContent = parseInt(val) === 0 ? '🔇' : parseInt(val) < 50 ? '🔉' : '🔊';
+        };
+
+        // Main "open clip" function
         window._expandCardPlay = function (ytId, startSec) {
-            currentYtId = ytId; currentYtStart = startSec || 0;
+            currentYtId = ytId;
+            currentYtStart = startSec || 0;
+
             const card = document.getElementById('cinemaCard');
-            const btn = document.getElementById('playCinemaBtn');
-            btn.style.display = 'none';
+            card.style.height = '300px';
 
-            card.style.transition = 'height 0.4s cubic-bezier(.16,1,.3,1)';
-            card.style.height = '200px';
+            // Hide play overlay while video loads
+            const pb = document.getElementById('playOverlayBtn');
+            if (pb) pb.style.display = 'none';
 
-            const endSec = (startSec || 0) + 31;
-            const iframe = document.createElement('iframe');
-            iframe.id = 'inlineYtFrame';
-            iframe.src = `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&start=${Math.floor(startSec || 0)}&end=${Math.floor(endSec)}&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&playsinline=1&mute=0`;
-            iframe.allow = 'autoplay;encrypted-media';
-            iframe.style.cssText = 'position:absolute;top:-60px;left:-10px;width:calc(100% + 20px);height:calc(100% + 120px);border:none;pointer-events:none;';
-            card.appendChild(iframe);
+            // Reset idle
+            document.getElementById('cinemaIdle').style.display = 'flex';
+            document.getElementById('cinemaControls').style.display = 'none';
 
-            const shield = document.createElement('div');
-            shield.id = 'ytShield';
-            shield.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:50;background:transparent;border-radius:18px;';
-            card.appendChild(shield);
-
-            const fill = document.getElementById('ytCountdownFill');
-            const lbl = document.getElementById('ytCountdownLbl');
-            fill.style.transition = 'none'; fill.style.width = '100%';
-            if (ytCountdownTimer) clearInterval(ytCountdownTimer);
-            let secs = 30; lbl.textContent = secs + 's';
-            document.getElementById('ytOverlay').style.pointerEvents = 'none';
-            setTimeout(() => { fill.classList.add('running30'); fill.style.width = '0%'; }, 50);
-            ytCountdownTimer = setInterval(() => {
-                secs--; lbl.textContent = secs + 's';
-                if (secs <= 0) { clearInterval(ytCountdownTimer); ytCountdownTimer = null; window.closeYtOverlay(); }
-            }, 1000);
+            if (!ytReady) {
+                const poll = setInterval(() => {
+                    if (window.YT && window.YT.Player) {
+                        ytReady = true; clearInterval(poll);
+                        createYtPlayer(ytId, startSec || 0);
+                    }
+                }, 100);
+            } else {
+                createYtPlayer(ytId, startSec || 0);
+            }
         };
 
         window.closeYtOverlay = function () {
-            if (ytCountdownTimer) { clearInterval(ytCountdownTimer); ytCountdownTimer = null; }
+            stopProgressTimer();
+            if (ytPlayer) {
+                try { ytPlayer.stopVideo() } catch (e) { }
+                try { ytPlayer.destroy() } catch (e) { }
+                ytPlayer = null;
+            }
+            // Re-create blank div for next use
+            const area = document.getElementById('cinemaVideoArea');
+            area.innerHTML = '<div id="ytPlayerDiv"></div>';
+
+            // Reset card height
             const card = document.getElementById('cinemaCard');
-            const frame = document.getElementById('inlineYtFrame');
-            const shield = document.getElementById('ytShield');
-            if (frame) frame.remove();
-            if (shield) shield.remove();
-            card.style.height = '120px';
-            const btn = document.getElementById('playCinemaBtn');
-            if (btn) btn.style.display = 'flex';
-            const fill = document.getElementById('ytCountdownFill');
-            if (fill) { fill.classList.remove('running30'); fill.style.transition = 'none'; fill.style.width = '100%'; }
+            card.style.height = '220px';
+            document.getElementById('cinemaIdle').style.display = 'flex';
+            document.getElementById('cinemaControls').style.display = 'none';
+
+            // Show play button again if it's still active player's turn
+            const pb = document.getElementById('playOverlayBtn');
+            if (pb && window.activePlayerId === window.myId) pb.style.display = 'flex';
+
+            ytIsPlaying = false;
+            ytMuted = false;
         };
 
-        window.ytOverlayClick = function (e) { /* no-op */ };
+        // How to play
+        window.openHtp = () => document.getElementById('htpOverlay').classList.add('open');
+        window.closeHtp = () => document.getElementById('htpOverlay').classList.remove('open');
+        window.htpClickOutside = (e) => { if (e.target === document.getElementById('htpOverlay')) closeHtp() };
     </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getDatabase, ref, set, get, update, onValue, off, onDisconnect, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-        // ★ CHANGE THIS to your CineTimeline Firebase project config ★
         const FB = {
             apiKey: "AIzaSyDS5Z3zMPBgX-rYnNSBg_kHsVOPkLZZ8rc",
             authDomain: "moviester-73d3c.firebaseapp.com",
@@ -2218,7 +982,7 @@
         };
         const db = getDatabase(initializeApp(FB));
 
-        // ── Stale room cleanup ──
+        // Stale room cleanup
         (async () => {
             try {
                 const snap = await get(ref(db, 'rooms')); if (!snap.exists()) return;
@@ -2230,56 +994,10 @@
                     if (status === 'playing' && age > PLAYING) dels.push(code);
                     if (status === 'finished' && age > FINISHED) dels.push(code);
                 }
-                await Promise.all(dels.map(code => remove(ref(db, `rooms/${code}`)).catch(() => { })));
-            } catch { }
+                await Promise.all(dels.map(code => remove(ref(db, `rooms/${code}`)).catch(() => {})));
+            } catch {}
         })();
 
-        // ── FIREBASE TRIGGER ──
-        window.openYtOverlay = function () {
-            if (!currentYtId) { window.toast('No clip available'); return; }
-            if (window.activePlayerId && window.activePlayerId !== window.myId) { window.toast('Only the active player can open the clip'); return; }
-            if (window.roomCode) update(ref(db, `rooms/${window.roomCode}`), { clipOpen: true, clipOpenTs: Date.now() });
-                window._expandCardPlay(currentYtId, currentYtStart);
-        };
-
-        window.myId = 'p_' + Math.random().toString(36).slice(2, 8);
-
-    </script>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getDatabase, ref, set, get, update, onValue, off, onDisconnect, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-        // ★ CHANGE THIS to your CineTimeline Firebase project config ★
-        const FB = {
-            apiKey: "AIzaSyDS5Z3zMPBgX-rYnNSBg_kHsVOPkLZZ8rc",
-            authDomain: "moviester-73d3c.firebaseapp.com",
-            databaseURL: "https://moviester-73d3c-default-rtdb.europe-west1.firebasedatabase.app",  // ← ADD THIS
-            projectId: "moviester-73d3c",
-            storageBucket: "moviester-73d3c.firebasestorage.app",
-            messagingSenderId: "768168977063",
-            appId: "1:768168977063:web:c002aae7994df727dcb182",
-            measurementId: "G-RLNZDZ4WZ4"
-        };
-        const db = getDatabase(initializeApp(FB));
-
-        // ── Stale room cleanup ──
-        (async () => {
-            try {
-                const snap = await get(ref(db, 'rooms')); if (!snap.exists()) return;
-                const now = Date.now(), WAITING = 30 * 60 * 1000, PLAYING = 2 * 60 * 60 * 1000, FINISHED = 10 * 60 * 1000;
-                const rooms = snap.val(), dels = [];
-                for (const [code, room] of Object.entries(rooms)) {
-                    const age = now - (room.createdAt || 0), status = room.status || 'waiting';
-                    if (status === 'waiting' && age > WAITING) dels.push(code);
-                    if (status === 'playing' && age > PLAYING) dels.push(code);
-                    if (status === 'finished' && age > FINISHED) dels.push(code);
-                }
-                await Promise.all(dels.map(code => remove(ref(db, `rooms/${code}`)).catch(() => { })));
-            } catch { }
-        })();
-
-    
         window.myId = 'p_' + Math.random().toString(36).slice(2, 8);
         window.myName = ''; window.roomCode = ''; window.isHost = false;
         window.activePlayerId = '';
@@ -2290,17 +1008,11 @@
         let lastMovieDbId = null;
         let autoNextTimer = null, guessDraftTimer = null;
 
-        // ── Fuzzy match ──
-        function levenshtein(a, b) { const m = a.length, n = b.length; const dp = Array.from({ length: m + 1 }, (_, i) => Array.from({ length: n + 1 }, (_, j) => i === 0 ? j : j === 0 ? i : 0)); for (let i = 1; i <= m; i++)for (let j = 1; j <= n; j++)dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]); return dp[m][n] }
+        function levenshtein(a, b) { const m = a.length, n = b.length; const dp = Array.from({ length: m + 1 }, (_, i) => Array.from({ length: n + 1 }, (_, j) => i === 0 ? j : j === 0 ? i : 0)); for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]); return dp[m][n] }
         function normStr(s) { return (s || '').trim().toLowerCase().replace(/['".,\-!?():]/g, '').replace(/\s+/g, ' ').replace(/^the\s/, '').trim() }
         function fuzzyMatch(guess, answer) { const g = normStr(guess), a = normStr(answer); if (!g || !a) return false; if (g === a) return true; if (a.includes(g) || g.includes(a)) return true; return levenshtein(g, a) <= Math.max(1, Math.floor(Math.max(g.length, a.length) * 0.25)) }
-        function scoreGuess(guess, movie) {
-            const titleMatch = fuzzyMatch(guess.tGuess, movie.title);
-            const yearMatch = guess.yGuess && parseInt(guess.yGuess) === parseInt(movie.year);
-            return { score: (titleMatch ? .5 : 0) + (yearMatch ? .5 : 0), titleMatch, yearMatch };
-        }
+        function scoreGuess(guess, movie) { const titleMatch = fuzzyMatch(guess.tGuess, movie.title); const yearMatch = guess.yGuess && parseInt(guess.yGuess) === parseInt(movie.year); return { score: (titleMatch ? .5 : 0) + (yearMatch ? .5 : 0), titleMatch, yearMatch } }
 
-        // ── Helpers ──
         window.switchTab = t => {
             document.getElementById('createForm').style.display = t === 'create' ? 'block' : 'none';
             document.getElementById('joinForm').style.display = t === 'join' ? 'block' : 'none';
@@ -2316,14 +1028,14 @@
         window.screen = id => { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active') };
         window.showLoading = (msg = 'LOADING') => { document.getElementById('loadingText').textContent = msg; document.getElementById('loadingOverlay').classList.remove('hidden') };
         window.hideLoading = () => document.getElementById('loadingOverlay').classList.add('hidden');
-        function shuffle(a) { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[b[i], b[j]] = [b[j], b[i]] } return b }
-        window.copyCode = () => { navigator.clipboard.writeText(window.roomCode).catch(() => { }); window.toast('Copied! 📋') };
+        function shuffle(a) { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]] } return b }
+        window.copyCode = () => { navigator.clipboard.writeText(window.roomCode).catch(() => {}); window.toast('Copied! 📋') };
 
         async function setupPresence() {
             if (!window.roomCode) return;
             const pr = ref(db, `rooms/${window.roomCode}/presence/${window.myId}`);
-            try { await set(pr, { connected: true, lastSeen: serverTimestamp() }) } catch { }
-            try { onDisconnect(pr).set({ connected: false, lastSeen: serverTimestamp() }) } catch { }
+            try { await set(pr, { connected: true, lastSeen: serverTimestamp() }) } catch {}
+            try { onDisconnect(pr).set({ connected: false, lastSeen: serverTimestamp() }) } catch {}
         }
 
         function scheduleGuessDraftWrite(immediate = false) {
@@ -2332,12 +1044,11 @@
             const y = document.getElementById('guessYear')?.value ?? '';
             const payload = { tGuess: t.trim(), yGuess: y.trim(), ts: Date.now() };
             const write = async () => { if (!window.roomCode) return; await update(ref(db, `rooms/${window.roomCode}/guessDrafts/${window.myId}`), payload) };
-            if (immediate) { if (guessDraftTimer) { clearTimeout(guessDraftTimer); guessDraftTimer = null } write().catch(() => { }); return }
+            if (immediate) { if (guessDraftTimer) { clearTimeout(guessDraftTimer); guessDraftTimer = null } write().catch(() => {}); return }
             if (guessDraftTimer) clearTimeout(guessDraftTimer);
-            guessDraftTimer = setTimeout(() => write().catch(() => { }), 220);
+            guessDraftTimer = setTimeout(() => write().catch(() => {}), 220);
         }
 
-        // ── CREATE ROOM ──
         window.createRoom = async () => {
             const name = document.getElementById('createName').value.trim();
             if (!name) { document.getElementById('createError').textContent = 'Enter your name'; return }
@@ -2365,7 +1076,6 @@
             document.getElementById('displayCode').textContent = window.roomCode;
         };
 
-        // ── JOIN ROOM ──
         window.joinRoom = async () => {
             const name = document.getElementById('joinName').value.trim();
             const code = document.getElementById('joinCode').value.trim().toUpperCase();
@@ -2437,7 +1147,7 @@
         function handleRoom(room) {
             const players = Object.entries(room.players || {}).map(([id, p]) => ({ id, ...p }));
             if (room && room.players && Object.keys(room.players).length === 0) {
-                remove(ref(db, `rooms/${window.roomCode}`)).catch(() => { });
+                remove(ref(db, `rooms/${window.roomCode}`)).catch(() => {});
                 window.screen('lobbyScreen'); return;
             }
             if (room.status === 'waiting') {
@@ -2453,9 +1163,7 @@
             if (room.status === 'playing' || room.status === 'loading') {
                 if (!document.getElementById('gameScreen').classList.contains('active')) window.screen('gameScreen');
                 if (room.status === 'playing') renderGame(room, players);
-
-                // Sync clip open state for spectators
-                if (room.clipOpen && room.currentMovie?.youtubeId && !document.getElementById('inlineYtFrame') && window.activePlayerId !== window.myId) {
+                if (room.clipOpen && room.currentMovie?.youtubeId && !window.ytPlayer && window.activePlayerId !== window.myId) {
                     window._expandCardPlay(room.currentMovie.youtubeId, room.currentMovie.startSec || 0);
                 }
                 return;
@@ -2498,27 +1206,28 @@
 
             document.getElementById('scores').innerHTML = [...players].sort((a, b) => b.score - a.score).map(p =>
                 `<div class="sc${p.id === window.activePlayerId ? ' active' : ''}${p.id === window.myId ? ' me' : ''}">
-          <div class="sc-n">${p.name}</div>
-          <div class="sc-p">${p.score} <span>cards</span></div>
-          <div class="coin-badge">🎬 ${p.tokens || 0}</div>
-        </div>`).join('');
+                    <div class="sc-n">${p.name}</div>
+                    <div class="sc-p">${p.score} <span>cards</span></div>
+                    <div class="coin-badge">🎬 ${p.tokens || 0}</div>
+                </div>`).join('');
 
             const banner = document.getElementById('banner');
             if (isMyTurn) { banner.textContent = "Your turn! Press ▶ then place on your timeline"; banner.className = 'banner' }
             else { banner.textContent = `${activePl?.name}'s turn — guess for coins! 🎬`; banner.className = 'banner other' }
 
-            // Show/hide play button vs listener bar
             const cinemaCard = document.getElementById('cinemaCard');
-            const playCinemaBtn = document.getElementById('playCinemaBtn');
+            const pb = document.getElementById('playOverlayBtn');
             const listenerBar = document.getElementById('listenerBar');
+
             if (isMyTurn) {
                 cinemaCard.style.display = 'flex';
                 document.getElementById('revealedCard').style.display = 'none';
-                playCinemaBtn.style.display = 'flex';
+                pb.style.display = 'flex';
                 listenerBar.style.display = 'none';
             } else {
                 cinemaCard.style.display = 'none';
                 document.getElementById('revealedCard').style.display = 'none';
+                pb.style.display = 'none';
                 listenerBar.style.display = 'flex';
             }
 
@@ -2588,7 +1297,7 @@
                 if (room.currentMovie) {
                     currentYtId = room.currentMovie.youtubeId;
                     currentYtStart = room.currentMovie.startSec || 0;
-                    playCinemaBtn.style.display = isMyTurn ? 'flex' : 'none';
+                    pb.style.display = isMyTurn ? 'flex' : 'none';
                 }
                 lastMovieDbId = room.currentMovie?.dbId || lastMovieDbId;
             }
@@ -2607,7 +1316,7 @@
                     document.getElementById('nextBtn').textContent = maxS >= winTarget ? '🏁 FINISH' : 'NEXT TURN ▶';
                 }
                 const anyCorrect = (room.lastResult?.tokenResults || []).some(r => (r?.score || 0) > 0);
-                if (isMyTurn && anyCorrect) autoNextTimer = setTimeout(() => { autoNextTimer = null; nextTurn().catch(() => { }) }, 5000);
+                if (isMyTurn && anyCorrect) autoNextTimer = setTimeout(() => { autoNextTimer = null; nextTurn().catch(() => {}) }, 5000);
             }
         }
 
@@ -2621,9 +1330,9 @@
             else yearHint = 'Here';
             const isSel = selectedDropIndex === index;
             return `<div class="tl-drop${isSel ? ' selected' : ''}" onclick="selectDrop(${index},'${yearHint}')">
-        <div class="tl-drop-inner">+</div>
-        <div class="tl-drop-year">${yearHint}</div>
-      </div>`;
+                <div class="tl-drop-inner">+</div>
+                <div class="tl-drop-year">${yearHint}</div>
+            </div>`;
         }
 
         function betDropZone(index, tl, room, betsByIndex, myBet, canBet) {
@@ -2643,11 +1352,11 @@
             if (isMyBetHere) return `<div class="tl-bet-drop locked">${count ? `<div class="bet-count">${count}</div>` : ''}<div class="tl-bet-inner">🪙</div><div class="tl-bet-year">${yearHint}</div>${stackHtml}</div>`;
             if (!canBet) return `<div class="tl-bet-drop disabled">${count ? `<div class="bet-count">${count}</div>` : ''}<div class="tl-bet-inner">🪙</div><div class="tl-bet-year">${yearHint}</div>${stackHtml}</div>`;
             return `<div class="tl-bet-drop${isSel ? ' selected' : ''}" data-bet-label="${yearHint}" onclick="selectBet(${index},this.dataset.betLabel)">
-        ${count ? `<div class="bet-count">${count}</div>` : ''}
-        <div class="tl-bet-inner">🪙</div>
-        <div class="tl-bet-year">${yearHint}</div>
-        ${stackHtml}
-      </div>`;
+                ${count ? `<div class="bet-count">${count}</div>` : ''}
+                <div class="tl-bet-inner">🪙</div>
+                <div class="tl-bet-year">${yearHint}</div>
+                ${stackHtml}
+            </div>`;
         }
 
         window.selectDrop = (index, label) => {
@@ -2768,6 +1477,7 @@
             const cinemaCard = document.getElementById('cinemaCard');
             const revealedCard = document.getElementById('revealedCard');
             cinemaCard.style.display = 'none';
+            document.getElementById('playOverlayBtn').style.display = 'none';
             document.getElementById('listenerBar').style.display = 'none';
             revealedCard.style.display = 'flex';
             document.getElementById('rvTitle').textContent = movie.title;
@@ -2803,7 +1513,7 @@
             const maxScore = Math.max(...Object.values(room.players).map(p => p.score));
             if (maxScore >= winTarget) {
                 await update(ref(db, `rooms/${window.roomCode}`), { status: 'finished', finishedAt: Date.now() });
-                setTimeout(() => remove(ref(db, `rooms/${window.roomCode}`)).catch(() => { }), 15000);
+                setTimeout(() => remove(ref(db, `rooms/${window.roomCode}`)).catch(() => {}), 15000);
             } else {
                 currentTurnState = ''; closeYtOverlay();
                 await update(ref(db, `rooms/${window.roomCode}`), { turnIndex: (room.turnIndex || 0) + 1 });
@@ -2820,13 +1530,13 @@
             closeYtOverlay();
             const sorted = [...players].sort((a, b) => b.score - a.score);
             document.getElementById('gameScreen').innerHTML = `<div class="finish-screen">
-        <div class="finish-trophy">🏆</div>
-        <div class="finish-winner">${sorted[0]?.name}</div>
-        <div class="finish-sub">WINS THE SILVER SCREEN!</div>
-        ${sorted.map((p, i) => `<div class="finish-row">${['🥇', '🥈', '🥉'][i] || '•'} <span>${p.name}</span> — ${p.score} films, ${p.tokens || 0}🪙</div>`).join('')}
-        <br><button class="btn" style="max-width:220px;margin-top:20px" onclick="location.reload()">BACK TO LOBBY</button>
-        <div style="margin-top:24px;font-size:.62rem;color:var(--muted);letter-spacing:2px">CINETIMELINE 🎬</div>
-      </div>`;
+                <div class="finish-trophy">🏆</div>
+                <div class="finish-winner">${sorted[0]?.name}</div>
+                <div class="finish-sub">WINS THE SILVER SCREEN!</div>
+                ${sorted.map((p, i) => `<div class="finish-row">${['🥇', '🥈', '🥉'][i] || '•'} <span>${p.name}</span> — ${p.score} films, ${p.tokens || 0}🪙</div>`).join('')}
+                <br><button class="btn" style="max-width:220px;margin-top:20px" onclick="location.reload()">BACK TO LOBBY</button>
+                <div style="margin-top:24px;font-size:.62rem;color:var(--muted);letter-spacing:2px">CINETIMELINE 🎬</div>
+            </div>`;
         }
 
         window.leaveRoom = async () => {
@@ -2836,16 +1546,23 @@
                 const order = roomBefore?.joinOrder || [];
                 const newOrder = order.filter(pid => pid !== window.myId);
                 if (order.length !== newOrder.length) await update(ref(db, `rooms/${window.roomCode}`), { joinOrder: newOrder });
-            } catch { }
-            try { await remove(ref(db, `rooms/${window.roomCode}/presence/${window.myId}`)) } catch { }
-            try { await remove(ref(db, `rooms/${window.roomCode}/players/${window.myId}`)) } catch { }
-            try { await remove(ref(db, `rooms/${window.roomCode}/guessDrafts/${window.myId}`)) } catch { }
-            try { await remove(ref(db, `rooms/${window.roomCode}/bets/${window.myId}`)) } catch { }
+            } catch {}
+            try { await remove(ref(db, `rooms/${window.roomCode}/presence/${window.myId}`)) } catch {}
+            try { await remove(ref(db, `rooms/${window.roomCode}/players/${window.myId}`)) } catch {}
+            try { await remove(ref(db, `rooms/${window.roomCode}/guessDrafts/${window.myId}`)) } catch {}
+            try { await remove(ref(db, `rooms/${window.roomCode}/bets/${window.myId}`)) } catch {}
             try {
                 const room = (await get(ref(db, `rooms/${window.roomCode}`))).val();
                 if (room?.players && Object.keys(room.players).length === 0) await remove(ref(db, `rooms/${window.roomCode}`));
-            } catch { }
+            } catch {}
             location.reload();
+        };
+
+        window.openYtOverlay = function () {
+            if (!currentYtId) { window.toast('No clip available'); return }
+            if (window.activePlayerId && window.activePlayerId !== window.myId) { window.toast('Only the active player can open the clip'); return }
+            if (window.roomCode) update(ref(db, `rooms/${window.roomCode}`), { clipOpen: true, clipOpenTs: Date.now() });
+            window._expandCardPlay(currentYtId, currentYtStart);
         };
 
         document.querySelectorAll('.tl-scroll').forEach(el => {
@@ -2853,6 +1570,11 @@
         });
         document.getElementById('guessTitle')?.addEventListener('input', () => scheduleGuessDraftWrite(false));
         document.getElementById('guessYear')?.addEventListener('input', () => scheduleGuessDraftWrite(false));
+
+        // Wire up custom control events
+        document.getElementById('ctrlPlayPause').addEventListener('click', window.ctrlTogglePlay);
+        document.getElementById('ctrlSeek').addEventListener('input', function () { window.ctrlSeekTo(this.value) });
+        document.getElementById('ctrlVolume').addEventListener('input', function () { window.ctrlSetVolume(this.value) });
     </script>
 </body>
 </html>
