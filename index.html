@@ -2137,6 +2137,8 @@
                 height: '100%',
                 videoId: videoId,
                 playerVars: {
+                    origin: window.location.origin,
+                    widget_referrer: window.location.origin,
                     autoplay: 1,
                     start: Math.floor(ytClipStart),
                     end: Math.floor(ytClipEnd),
