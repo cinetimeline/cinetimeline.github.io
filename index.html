@@ -2130,63 +2130,18 @@
             ytClipStart = startSec || 0;
             ytClipEnd = ytClipStart + 30;
 
-            if (ytPlayer) { ytPlayer.destroy(); ytPlayer = null }
+            const area = document.getElementById('cinemaVideoArea');
+            area.innerHTML = `<iframe
+        src="https://inv.nadeko.net/embed/${videoId}?start=${Math.floor(startSec)}&autoplay=1"
+        width="100%" height="100%"
+        style="position:absolute;top:-60px;left:-10px;width:calc(100% + 20px);height:calc(100% + 120px);border:none;pointer-events:none"
+        allowfullscreen allow="autoplay">
+    </iframe>`;
 
-            ytPlayer = new YT.Player('ytPlayerDiv', {
-                width: '100%',
-                height: '100%',
-                host: 'https://www.youtube-nocookie.com',
-                videoId: videoId,
-                playerVars: {
-                    origin: window.location.origin,
-                    widget_referrer: window.location.origin,
-                    autoplay: 1,
-                    start: Math.floor(ytClipStart),
-                    end: Math.floor(ytClipEnd),
-                    controls: 0,
-                    modestbranding: 1,
-                    rel: 0,
-                    showinfo: 0,
-                    iv_load_policy: 3,
-                    disablekb: 1,
-                    fs: 0,
-                    playsinline: 1,
-                    mute: 0,
-                    cc_load_policy: 0
-                    // NOTE: no 'origin' param — causes postMessage errors on localhost/non-matching origins
-                },
-                events: {
-                    onReady: function (e) {
-                        e.target.setVolume(100);
-                        e.target.playVideo();
-                        startControlsUI();
-                    },
-                    onStateChange: function (e) {
-                        if (e.data === YT.PlayerState.PLAYING) {
-                            ytIsPlaying = true;
-                            document.getElementById('ctrlPlayPause').textContent = '⏸';
-                        } else if (e.data === YT.PlayerState.PAUSED) {
-                            ytIsPlaying = false;
-                            document.getElementById('ctrlPlayPause').textContent = '▶';
-                        } else if (e.data === YT.PlayerState.ENDED) {
-                            ytIsPlaying = false;
-                            document.getElementById('ctrlPlayPause').textContent = '▶';
-                            // Guard: only close if we actually played at least 3 seconds.
-                            // YouTube can fire ENDED spuriously (buffering issues, postMessage
-                            // errors, mismatched origin) before real playback starts.
-                            let elapsed = 0;
-                            try { elapsed = (ytPlayer.getCurrentTime() - ytClipStart) } catch (ex) { }
-                            if (elapsed >= 3) {
-                                stopProgressTimer();
-                                closeYtOverlay();
-                            } else {
-                                // False end — just retry playback
-                                try { ytPlayer.playVideo(); } catch (ex) { }
-                            }
-                        }
-                    }
-                }
-            });
+            // Simulate controls starting since we can't get callbacks from Piped
+            startControlsUI();
+            ytIsPlaying = true;
+            document.getElementById('ctrlPlayPause').textContent = '⏸';
         }
 
         function startControlsUI() {
